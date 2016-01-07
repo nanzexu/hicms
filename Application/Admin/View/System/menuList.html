@@ -1,0 +1,143 @@
+<extend name="Public/mainbase"/>
+<block name="linkcss">
+    <link href="__CSS__/plugins/jsTree/style.min.css" rel="stylesheet">
+    <link href="__CSS__/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+</block>
+<block name="script">
+    <script src="__JS__/plugins/jsTree/jstree.min.js"></script>
+    <script src="__JS__/plugins/sweetalert/sweetalert.min.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            $("#jstree").jstree({
+                "plugins": ["wholerow","contextmenu"],
+                'contextmenu': {
+                    'items': {
+                        "create":null,
+                        "rename":null,
+                        "remove":null,
+                        "ccp":null,
+                        "edit":{
+                            "label":"编辑菜单",
+                            "action":function(data){
+                                var inst = jQuery.jstree.reference(data.reference);
+                                obj = inst.get_node(data.reference);
+                                layer.open({
+                                    type: 2,
+                                    title: 'layer mobile页',
+                                    shadeClose: true,
+                                    shade: 0.8,
+                                    area: ['680px', '600px'],
+                                    content: '{:U('System/menuAdd')}' //iframe的url
+                                });
+
+
+                            }
+                        },
+                        "add":{
+                            "label":"添加子菜单",
+                            "action":function(data){
+                                var inst = jQuery.jstree.reference(data.reference);
+                                        obj = inst.get_node(data.reference);
+
+                                layer.open({
+                                    type: 2,
+                                    title: 'layer mobile页',
+                                    shadeClose: true,
+                                    shade: 0.8,
+                                    area: ['680px', '600px'],
+                                    content: '{:U('System/menuAdd')}' //iframe的url
+                                });
+                            }
+                        },
+
+                        "delete":{
+                            "label":"删除菜单",
+                            "action":function(data){
+                                var inst = jQuery.jstree.reference(data.reference),
+                                        obj = inst.get_node(data.reference);
+                                swal({
+                                    title: "您确定要删除菜单吗",
+                                    text: "删除后将无法恢复，请谨慎操作！",
+                                    type: "warning",
+                                    showCancelButton: true,
+                                    confirmButtonColor: "#DD6B55",
+                                    confirmButtonText: "删除",
+                                    closeOnConfirm: false
+                                }, function () {
+                                    $.post(
+                                            "{:U('System/menuDelete')}",
+                                            { id: obj.id },
+                                            function(data){
+                                                if(data.status){
+                                                    reload();
+                                                    swal("删除成功！", "您已经永久删除了菜单。", "success");
+                                                }
+                                                else{
+                                                    swal("删除失败！",data.info, "error");
+                                                }
+                                            }
+                                    );
+
+                                });
+                            }
+                        },
+
+                    }
+                },
+
+                'core': {
+                    'data': {
+                        "type":"post",
+                        "url":"{:U('System/menuList')}",
+                        "dataType":"json",
+                        "cache":false,
+                        'data' : function (node) {
+                            return {
+                                'id' : node.id,
+                            };
+                        }
+                    }
+                },
+
+
+            });
+
+
+        });
+
+        //刷新控件
+        function reload(){
+            $("#jstree").jstree("refresh");
+        }
+
+
+
+    </script>
+</block>
+<block name="body">
+    <div class="row wrapper wrapper-content fadeInRight">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>{$currentpos}</h5>
+
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" id="refresh" >
+                            <i class="fa fa-refresh" ></i>
+                        </a>
+
+
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div id="jstree"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</block>
