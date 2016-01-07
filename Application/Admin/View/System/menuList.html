@@ -22,14 +22,9 @@
                             "action":function(data){
                                 var inst = jQuery.jstree.reference(data.reference);
                                 obj = inst.get_node(data.reference);
-                                layer.open({
-                                    type: 2,
-                                    title: 'layer mobile页',
-                                    shadeClose: true,
-                                    shade: 0.8,
-                                    area: ['680px', '600px'],
-                                    content: '{:U('System/menuAdd')}' //iframe的url
-                                });
+                                $("#{$Think.CONTROLLER_NAME}_{$Think.ACTION_NAME}_modal").modal({
+                                    "remote":"{:U('System/menuEdit')}",
+                                }).modal('show');
 
 
                             }

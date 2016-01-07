@@ -47,7 +47,19 @@ class SystemController extends CommonController{
         }
     }
     function menuEdit($id=0){
+        if($id && IS_POST){
 
+        }
+        else{
+            $modal=array(
+                'options'=>array(
+                    'title'=>'test title',
+                ),
+            );
+            //dump($modal);
+            $this->assign('modal', $modal);
+            $this->display();
+        }
     }
 }
 ?>
