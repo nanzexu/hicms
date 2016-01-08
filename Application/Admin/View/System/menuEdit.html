@@ -3,9 +3,30 @@
     <link href="__CSS__/plugins/jsTree/style.min.css" rel="stylesheet">
     <link href="__CSS__/plugins/sweetalert/sweetalert.css" rel="stylesheet">
     <link href="__CSS__/plugins/iCheck/custom.css" rel="stylesheet">
+    <!--<link href="__CSS__/plugins/smartselect/smartselect.min.css" rel="stylesheet">-->
 </block>
 <block name="script">
     <script src="__JS__/plugins/sweetalert/sweetalert.min.js"></script>
+    <!--<script src="__JS__/plugins/smartselect/jquery.smartselect.min.js"></script>-->
+    <script src="__JS__/jsonCategoryToSelector.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('#parentid').jsonCategoryToSelector({
+                        //显示的key值
+                        nameKey  : 'text',
+                        //分类选项的值
+                        valueKey : 'id',
+                        //子分类的key值
+                        subKey   : 'children',
+                        //值是标识在标签的哪个属性里
+                        val_attr : 'value',
+                        class_name : 'form-control m-b',
+                        dataUrl : '{:U('System/getMenuSelectTree')}'
+        });
+            //$('#parentid').val("{$info['id']}");
+            $("#parentid").find("option[value='{$info['id']}']").attr("selected",true);
+        });
+    </script>
 </block>
 <block name="body">
     <div class="row">
@@ -18,14 +39,7 @@
                             <label class="col-sm-2 control-label">上级菜单</label>
 
                             <div class="col-sm-10">
-                                <select class="form-control m-b" name="account">
-                                    <option>选项 1</option>
-                                    <option>选项 2</option>
-                                    <option>选项 3</option>
-                                    <option>选项 4</option>
-                                </select>
-
-
+                                <input type="text" name="parentid" id="parentid" value="" />
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
@@ -33,7 +47,7 @@
                             <label class="col-sm-2 control-label">菜单名称</label>
 
                             <div class="col-sm-10">
-                                <input type="text" class="form-control">
+                                <input type="text" class="form-control" value="{$info['name']}">
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>

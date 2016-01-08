@@ -25,6 +25,8 @@
                                 /*$("#{$Think.CONTROLLER_NAME}_{$Think.ACTION_NAME}_modal").modal({
                                     "remote":"{:U('System/menuEdit')}",
                                 }).modal('show');*/
+                                var url = "{:U('System/menuEdit')}";
+                                url += url.indexOf('?') != -1 ? '&id='+obj.id : '?id='+obj.id;
                                 layer.open({
                                             type: 2,
                                             title: 'layer mobile页',
@@ -32,7 +34,8 @@
                                             shade: 0.8,
                                             area: ['680px', '500px'],
                                             btn: ['保存', '取消'],
-                                            content: '{:U('System/menuEdit')}' //iframe的url
+                                            //content: '{:U('System/menuEdit',array("id"=>3))}' //iframe的url
+                                            content: url//iframe的url
                                 });
 
 

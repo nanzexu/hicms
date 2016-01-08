@@ -46,18 +46,31 @@ class SystemController extends CommonController{
             $this->error('删除失败');
         }
     }
+    public function getMenuSelectTree(){
+        $menu_db = D('Menu');
+        if(IS_POST){
+            if(S('system_menulist')){
+                $data = S('system_menulist');
+            }else{
+                $data = $menu_db->getSelectTree();
+                S('system_menulist', $data);
+            }
+            //$data = $menu_db->getTree();
+            $this->ajaxReturn($data);
+        }
+    }
     function menuEdit($id=0){
-        if($id && IS_POST){
+        $menu_db = D('Menu');
+        if(IS_POST){
 
         }
         else{
-            $modal=array(
-                'options'=>array(
-                    'title'=>'test title',
-                ),
-            );
-            //dump($modal);
-            $this->assign('modal', $modal);
+            if($id){
+                $list=$menu_db->where(array("id"=>$id))->find();
+                if($list){
+                    $this->assign("info",$list);
+                }
+            }
             $this->display();
         }
     }

@@ -40,6 +40,7 @@
         function generateView(){
             $.ajax({
                 url : opts.dataUrl,
+                type:"post",
                 success : function(data){
                     _this.hide();
                     //如果显示无选项的值
@@ -70,7 +71,7 @@
             for(var i = 0; i < len; i++){
                 var $opt = $('<option></option>');
                 var _val = data[i][opts.valueKey];
-                $opt.html(str_pad('','&nbsp;',level) +  data[i][opts.nameKey]).val(_val);
+                $opt.html(str_pad('','&nbsp;&nbsp;&nbsp;&nbsp;',level) +  data[i][opts.nameKey]).val(_val);
                 if(cur_val == _val){
                     $opt.attr('selected','selected');
                 }
