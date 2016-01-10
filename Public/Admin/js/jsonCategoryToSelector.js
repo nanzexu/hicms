@@ -20,6 +20,7 @@
             val_attr : 'value',
             //选择标签的样式名
             class_name : '',
+            cur_val:'0',
             //无值的选项
             defaultOpt : {
                 name  : '--请选择分类--',
@@ -29,7 +30,9 @@
         };
 
         opts = $.extend(opts,options);
-        var cur_val = getValue();
+        var cur_val=opts.cur_val;
+
+        //var cur_val = getValue();
         var $select = $('<select></select>');
 
         $select.addClass(opts.class_name);
@@ -52,6 +55,9 @@
                     }
                     generateOptions(data,0);
                     _this.after($select);
+
+                    setValue($select.val());
+                    //alert("hhh"+getValue());
                     $select.off('change').on('change',function(){
                         setValue($(this).val())
                     });
@@ -74,6 +80,7 @@
                 $opt.html(str_pad('','&nbsp;&nbsp;&nbsp;&nbsp;',level) +  data[i][opts.nameKey]).val(_val);
                 if(cur_val == _val){
                     $opt.attr('selected','selected');
+
                 }
                 $select.append($opt);
                 if(data[i][opts.subKey]){
