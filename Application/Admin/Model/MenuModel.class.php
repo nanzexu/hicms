@@ -161,6 +161,21 @@ class MenuModel extends Model{
         return $data;
     }
 
+    //get menuTree for index
+    public function getMenuTree($parentid = 0){
+        $field = array('id','`name` as `text`','listorder','`id` as `operateid`', 'is_system','a','c');
+        $order = '`listorder` ASC,`id` DESC';
+        $data = $this->field($field)->where(array('parentid'=>$parentid))->order($order)->select();
+        if (is_array($data)){
+            foreach ($data as &$arr){
+                $arr['children'] = $this->getMenuTree($arr['id']);
+            }
+        }else{
+            $data = array();
+        }
+        return $data;
+    }
+
     /**
      * 清除菜单相关缓存
      */

@@ -3,6 +3,9 @@ namespace Admin\Controller;
 use Think\Controller;
 class IndexController extends CommonController {
     public function index(){
+        $menu_db = D('Menu');
+        //print_r($menu_db->getMenuTree());die();
+        $this->assign('menuTree', $menu_db->getMenuTree());
         $this->display();
     }
     public function login(){
