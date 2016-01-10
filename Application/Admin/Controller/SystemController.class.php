@@ -59,10 +59,39 @@ class SystemController extends CommonController{
             $this->ajaxReturn($data);
         }
     }
+    /**
+     * 添加菜单
+     */
+    public function menuAdd($parentid = 0){
+        if(IS_POST){
+            $menu_db = D('Menu');
+            $data = I('post.info');
+            $data['display'] = $data['display'] ? '1' : '0';
+            $id = $menu_db->add($data);
+            if($id){
+                $menu_db->clearCatche();
+                $this->success('添加成功');
+            }else {
+                $this->error('添加失败');
+            }
+        }else{
+            $this->assign('parentid', $parentid);
+            $this->display('');
+        }
+    }
     function menuEdit($id=0){
+        if(!$id) $this->error('未选择菜单');
         $menu_db = D('Menu');
         if(IS_POST){
-
+            $data = I('post.info');
+            $data['display'] = $data['display'] ? '1' : '0';
+            $result = $menu_db->where(array('id'=>$id))->save($data);
+            if($result){
+                $menu_db->clearCatche();
+                $this->success('修改成功');
+            }else {
+                $this->error('修改失败');
+            }
         }
         else{
             if($id){

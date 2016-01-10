@@ -11,22 +11,22 @@
     <script src="__JS__/jsonCategoryToSelector.js"></script>
     <script type="text/javascript">
         $(function () {
-            $('#system_menu_form_edit_parentid').jsonCategoryToSelector({
-                        //显示的key值
-                        nameKey  : 'text',
-                        //分类选项的值
-                        valueKey : 'id',
-                        //子分类的key值
-                        subKey   : 'children',
-                        //值是标识在标签的哪个属性里
-                        val_attr : 'value',
-                        class_name : 'form-control m-b required ',
-                        //选定的值
-                        cur_val:'{$info['parentid']}',
-                        dataUrl : '{:U('System/getMenuSelectTree')}',
-                        defaultOpt : {name  : '作为顶级菜单', value : "0",show  : 1}
-            });
-            //$('#{$Think.CONTROLLER_NAME}_{$Think.MODULE_NAME}_{$Think.ACTION_NAME}_form').validate();
+            $('#{$Think.CONTROLLER_NAME}_{$Think.MODULE_NAME}_{$Think.ACTION_NAME}_parentid').jsonCategoryToSelector({
+                //显示的key值
+                nameKey  : 'text',
+                //分类选项的值
+                valueKey : 'id',
+                //子分类的key值
+                subKey   : 'children',
+                //值是标识在标签的哪个属性里
+                val_attr : 'value',
+                class_name : 'form-control m-b required ',
+                //选定的值
+                cur_val:'{$parentid}',
+                dataUrl : '{:U('System/getMenuSelectTree')}',
+                    defaultOpt : {name  : '作为顶级菜单', value : "0",show  : 1}
+        });
+        //$('#{$Think.CONTROLLER_NAME}_{$Think.MODULE_NAME}_{$Think.ACTION_NAME}_form').validate();
         });
     </script>
 </block>
@@ -41,7 +41,7 @@
                             <label class="col-sm-2 control-label">上级菜单</label>
 
                             <div class="col-sm-10">
-                                <input type="text" name="info[parentid]" id="system_menu_form_edit_parentid" required />
+                                <input type="text" name="info[parentid]" id="{$Think.CONTROLLER_NAME}_{$Think.MODULE_NAME}_{$Think.ACTION_NAME}_parentid" />
                                 <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 必填</span>
                             </div>
                         </div>
@@ -50,7 +50,7 @@
                             <label class="col-sm-2 control-label">菜单名称</label>
 
                             <div class="col-sm-10">
-                                <input type="text" class="form-control required" name="info[name]" id="system_menu_form_edit_name" value="{$info['name']}" required>
+                                <input type="text" class="form-control" name="info[name]" id="system_menu_form_edit_name" required>
                                 <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 必填</span>
                             </div>
                         </div>
@@ -60,7 +60,7 @@
                             <label class="col-sm-2 control-label">模块名称</label>
 
                             <div class="col-sm-10">
-                                <input type="text" name="info[c]" id="system_menu_form_edit_c" class="form-control" value="{$info['c']}" required>
+                                <input type="text" name="info[c]" id="system_menu_form_edit_c" class="form-control" required>
                                 <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 必填</span>
                             </div>
                         </div>
@@ -69,7 +69,7 @@
                             <label class="col-sm-2 control-label">方法名称</label>
 
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" name="info[a]" id="system_menu_form_edit_a" value="{$info['a']}" required>
+                                <input type="text" class="form-control" name="info[a]" id="system_menu_form_edit_a" required>
                                 <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 必填</span>
                             </div>
                         </div>
@@ -90,11 +90,11 @@
 
                                 <div class="radio">
                                     <label>
-                                        <input type="radio" <eq name="info.display" value="1">checked</eq> name="info[display]" value="1" id="optionsRadios1" >是</label>
+                                        <input type="radio" checked name="info[display]" value="1" id="optionsRadios1" >是</label>
                                 </div>
                                 <div class="radio">
                                     <label>
-                                        <input type="radio" <eq name="info.display" value="0">checked</eq> value="0" id="optionsRadios2" name="info[display]">否</label>
+                                        <input type="radio"  value="0" id="optionsRadios2" name="info[display]">否</label>
                                 </div>
                             </div>
                         </div>
