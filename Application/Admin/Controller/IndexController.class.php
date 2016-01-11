@@ -5,7 +5,13 @@ class IndexController extends CommonController {
     public function index(){
         $menu_db = D('Menu');
         //print_r($menu_db->getMenuTree());die();
-        $this->assign('menuTree', $menu_db->getMenuTree());
+        if(S('system_menuIndexList')){
+            $data = S('system_menuIndexList');
+        }else{
+            $data = $menu_db->getMenuTree();
+            S('system_menuIndexList', $data);
+        }
+        $this->assign('menuTree', $data);
         $this->display();
     }
     public function login(){

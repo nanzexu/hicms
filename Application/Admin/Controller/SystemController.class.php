@@ -49,11 +49,11 @@ class SystemController extends CommonController{
     public function getMenuSelectTree(){
         $menu_db = D('Menu');
         if(IS_POST){
-            if(S('system_menulist')){
-                $data = S('system_menulist');
+            if(S('system_menuselectlist')){
+                $data = S('system_menuselectlist');
             }else{
                 $data = $menu_db->getSelectTree();
-                S('system_menulist', $data);
+                S('system_menuselectlist', $data);
             }
             //$data = $menu_db->getTree();
             $this->ajaxReturn($data);

@@ -97,6 +97,9 @@
 				this.tree = $.extend(true, [], options.data);
 				delete options.data;
 			}
+			if(options.url){
+				alert(options.url);
+			}
 
 			this.options = $.extend({}, Tree.defaults, options);
 

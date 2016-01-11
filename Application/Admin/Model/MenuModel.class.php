@@ -150,7 +150,7 @@ class MenuModel extends Model{
     public function getSelectTree($parentid = 0){
         $field = array('id','`name` as `text`');
         $order = '`listorder` ASC,`id` DESC';
-        $data = $this->field($field)->where(array('parentid'=>$parentid))->order($order)->select();
+        $data = $this->field($field)->where(array('parentid'=>$parentid,'display'=>1))->order($order)->select();
         if (is_array($data)){
             foreach ($data as &$arr){
                 $arr['children'] = $this->getSelectTree($arr['id']);
@@ -165,7 +165,7 @@ class MenuModel extends Model{
     public function getMenuTree($parentid = 0){
         $field = array('id','`name` as `text`','listorder','`id` as `operateid`', 'is_system','a','c');
         $order = '`listorder` ASC,`id` DESC';
-        $data = $this->field($field)->where(array('parentid'=>$parentid))->order($order)->select();
+        $data = $this->field($field)->where(array('parentid'=>$parentid,'display'=>1))->order($order)->select();
         if (is_array($data)){
             foreach ($data as &$arr){
                 $arr['children'] = $this->getMenuTree($arr['id']);
@@ -181,6 +181,8 @@ class MenuModel extends Model{
      */
     public function clearCatche(){
         S('system_menulist', null);
+        S('system_menuselectlist', null);
+        S('system_menuIndexList', null);
         S('system_public_menuselecttree', null);
     }
 }
