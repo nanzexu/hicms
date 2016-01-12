@@ -10,7 +10,9 @@ use Think\Controller;
 class NewsController extends CommonController {
     public function categoryList(){
         if(IS_POST){
-
+            $cate_db=D('Category');
+            $data=$cate_db->getTree();
+            $this->ajaxReturn($data);
         }
         else{
             $this->display();

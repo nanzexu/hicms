@@ -40,7 +40,6 @@
 	};
 
 	Tree.defaults = {
-
 		injectStyle: true,
 
 		levels: 2,
@@ -60,6 +59,9 @@
 		highlightSelected: true,
 		showBorder: true,
 		showTags: false,
+        showBtns:false,
+
+        idField:"id",
 
 		// Event handler for when a node is selected
 		onNodeSelected: undefined
@@ -89,7 +91,19 @@
 		},
 
 		_init: function(options) {
-		
+
+			if(options.url){
+                $.ajax({
+                    url:options.url,
+                    type:'post',
+                    async : false,
+                    success:function(res){
+                        options.data=res;
+
+                    }
+                });
+			}
+
 			if (options.data) {
 				if (typeof options.data === 'string') {
 					options.data = $.parseJSON(options.data);
@@ -97,9 +111,7 @@
 				this.tree = $.extend(true, [], options.data);
 				delete options.data;
 			}
-			if(options.url){
-				alert(options.url);
-			}
+
 
 			this.options = $.extend({}, Tree.defaults, options);
 
@@ -109,6 +121,21 @@
 			this._subscribeEvents();
 			this._render();
 		},
+        _getdatafromurl:function(url){
+            $.ajax({
+                url:url,
+                type:'post',
+                success:function(res){
+                    alert('success');
+                    return res;
+
+                },
+                error:function(res){
+                    return res;
+                }
+
+            });
+        },
 
 		_unsubscribeEvents: function() {
 
@@ -324,6 +351,17 @@
 							);
 					});
 				}
+                //Add btns as button
+                if (self.options.showBtns && node.btns) {
+					$.each(node.btns, function addTag(id, tag) {
+						treeItem
+							.append($(self._template.btn)
+                                .attr("onclick",tag.evn+"("+node[self.options.idField]+");")
+								.append(tag.text)
+							);
+					});
+				}
+
 
 				// Add item to the tree
 				self.$wrapper.append(treeItem);
@@ -400,6 +438,7 @@
 			iconWrapper: '<span class="icon"></span>',
 			icon: '<i></i>',
 			link: '<a href="#" style="color:inherit;"></a>',
+			btn: '<a  class="btn btn-primary btn-xs" style="float: right;margin-left: 3px;"></a>',
 			badge: '<span class="badge"></span>'
 		},
 
