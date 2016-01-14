@@ -3,16 +3,138 @@
     <link href="__CSS__/plugins/treeview/bootstrap-treeview.css" rel="stylesheet">
 </block>
 <block name="script">
-    <script src="__JS__/plugins/treeview/bootstrap-treeview.js"></script>
+    <script src="__JS__/plugins/treeview/bootstrap-treeveiw.js"></script>
     <script type="text/javascript">
         $(function(){
             $("#treeview").treeview({
                 url:"{:U('News/categoryList')}",
-                showBtns:true,idField:"catid",
+                showBtns:true,
+                idField:"catid",
                 selectedBackColor:"#ffffff",
                 selectedColor:"#676A6C"
             });
+
         });
+        //刷新控件
+        function reload() {
+            $("#treeview").treeview("refresh");
+        }
+        function edit(id){
+            var url = "{:U('News/categoryEdit')}";
+            url += url.indexOf('?') != -1 ? '&id=' + id : '?id=' + id;
+            layer.open({
+                        type: 2,
+                        title: '编辑菜单',
+                        shadeClose: false,
+                        shade: 0.8,
+                        area: ['680px', '500px'],
+                        btn: ['保存', '取消'],
+                        //content: '{:U('System/menuEdit',array("id"=>3))}' //iframe的url
+                        content: url,//iframe的url
+                        yes: function (index, layero) {
+                            //alert("yes");
+                            var body = layer.getChildFrame('body', index);
+                            body.find('form').validate({
+                                onsubmit:true,// 是否在提交是验证
+                                onfocusout:false,// 是否在获取焦点时验证
+                                onkeyup :false,// 是否在敲击键盘时验证
+
+                                submitHandler:function(form){
+                                    $.post(url, $(form).serialize(), function(res){
+                                        if(!res.status){
+                                            //$.messager.alert('提示信息', res.info, 'error');
+                                            layer.close(index);
+                                            swal({title:"发生了什么？",text:res.info,type:"error"});
+                                        }else{
+                                            //$.messager.alert('提示信息', res.info, 'info');
+                                            reload();
+                                            layer.close(index);
+                                            swal({title:"太帅了",text:res.info,type:"success"});
+                                        }
+                                    });
+
+                                }
+                            });
+                            body.find('form').submit();
+
+                        },
+                        cancel: function (index, layero) {
+
+                        }
+                    }
+            );
+        }
+        function add(id){
+            var url = "{:U('News/categoryAdd')}";
+            url += url.indexOf('?') != -1 ? '&parentid=' + id : '?parentid=' + id;
+            layer.open({
+                        type: 2,
+                        title: '添加菜单',
+                        shadeClose: false,
+                        shade: 0.8,
+                        area: ['680px', '500px'],
+                        btn: ['保存', '取消'],
+                        //content: '{:U('System/menuEdit',array("id"=>3))}' //iframe的url
+                        content: url,//iframe的url
+                        yes: function (index, layero) {
+                            //alert("yes");
+                            var body = layer.getChildFrame('body', index);
+                            body.find('form').validate({
+                                onsubmit:true,// 是否在提交是验证
+                                onfocusout:false,// 是否在获取焦点时验证
+                                onkeyup :false,// 是否在敲击键盘时验证
+
+                                submitHandler:function(form){
+                                    $.post(url, $(form).serialize(), function(res){
+                                        if(!res.status){
+                                            //$.messager.alert('提示信息', res.info, 'error');
+                                            layer.close(index);
+                                            swal({title:"发生了什么？",text:res.info,type:"error"});
+                                        }else{
+                                            //$.messager.alert('提示信息', res.info, 'info');
+                                            reload();
+                                            layer.close(index);
+                                            swal({title:"太帅了",text:res.info,type:"success"});
+                                        }
+                                    });
+
+                                }
+                            });
+                            body.find('form').submit();
+
+                        },
+                        cancel: function (index, layero) {
+
+                        }
+                    }
+            );
+        }
+        function del(id){
+            swal({
+                title: "您确定要删除菜单吗",
+                text: "删除后将无法恢复，请谨慎操作！",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "删除",
+                closeOnConfirm: false
+            }, function () {
+                $.post(
+                        "{:U('News/categoryDelete')}",
+                        { id: id},
+                        function (data) {
+                            if (data.status) {
+                                reload();
+                                swal("删除成功！", "您已经永久删除了菜单。", "success");
+                            }
+                            else {
+                                swal("删除失败！", data.info, "error");
+                            }
+                        }
+                );
+
+            });
+        }
     </script>
 </block>
 <block name="body">
