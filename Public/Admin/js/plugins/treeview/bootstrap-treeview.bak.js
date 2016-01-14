@@ -121,21 +121,6 @@
 			this._subscribeEvents();
 			this._render();
 		},
-        _getdatafromurl:function(url){
-            $.ajax({
-                url:url,
-                type:'post',
-                success:function(res){
-                    alert('success');
-                    return res;
-
-                },
-                error:function(res){
-                    return res;
-                }
-
-            });
-        },
 
 		_unsubscribeEvents: function() {
 
