@@ -16,6 +16,10 @@ class CommonController extends Controller {
 
         //记录上次每页显示数
         if(I('get.grid') && I('post.rows')) cookie('pagesize', I('post.rows', C('DATAGRID_PAGE_SIZE'), 'intVal'));
+
+        $menu_db=D('Menu');
+        $currentpos = $menu_db->currentPos(I('get.menuid'));  //栏目位置
+        $this->assign('currentpos', $currentpos);
     }
     /**
      * 判断用户是否已经登陆

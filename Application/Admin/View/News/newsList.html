@@ -9,20 +9,26 @@
     <script type="text/javascript">
         $(function(){
             $("#grid").bootstrapTable({
-
                 method:'post',
                 url:"{:U('News/newsList')}",
+                search:"true",
+                showRefresh:true,
+                showColumns:true,
+                //分页
+                //sidePagination:"server",
+                pagination:true,
+                pageSize:2,
                 columns:[
+                    {title:'id',field:'id',width:'5%',checkbox:true},
                     {title:'标题',field:'title',width:'50%'},
                     {title:'发布用户',field:'username',width:'10%'},
-                    {title:'发布时间',field:'inputtime',width:'20%',formatter:'formatdate'},
-                    {title:'最后修改时间',field:'updatetime',width:'20%'},
+                    {title:'发布时间',field:'inputtime',width:'20%',formatter:'getLocalTime',sortable:"true"},
+                    {title:'最后修改时间',field:'updatetime',width:'20%',formatter:'getLocalTime',sortable:"true"},
                 ]
             });
         });
-        function formatdate(value){
 
-        }
+
     </script>
 </block>
 <block name="body">
