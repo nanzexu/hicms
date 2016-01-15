@@ -1,0 +1,91 @@
+<extend name="Public/mainbase"/>
+<block name="linkcss">
+    <link href="__CSS__/plugins/jsTree/style.min.css" rel="stylesheet">
+    <link href="__CSS__/plugins/iCheck/custom.css" rel="stylesheet">
+    <!--<link href="__CSS__/plugins/smartselect/smartselect.min.css" rel="stylesheet">-->
+</block>
+<block name="script">
+    <!--<script src="__JS__/plugins/smartselect/jquery.smartselect.min.js"></script>-->
+    <script src="__JS__/jsonCategoryToSelector.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('#{$Think.CONTROLLER_NAME}_{$Think.MODULE_NAME}_{$Think.ACTION_NAME}_parentid').jsonCategoryToSelector({
+                        //显示的key值
+                        nameKey  : 'text',
+                        //分类选项的值
+                        valueKey : 'id',
+                        //子分类的key值
+                        subKey   : 'children',
+                        //值是标识在标签的哪个属性里
+                        val_attr : 'value',
+                        class_name : 'form-control m-b required ',
+                        //选定的值
+                        cur_val:"{$info['parentid']}",
+                        dataUrl : "{:U('News/getCategorySelectTree')}",
+                    defaultOpt : {name  : '作为顶级菜单', value : "0",show  : 1}
+        });
+            //$('#{$Think.CONTROLLER_NAME}_{$Think.MODULE_NAME}_{$Think.ACTION_NAME}_form').validate();
+        });
+    </script>
+</block>
+<block name="body">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+
+                <div class="ibox-content">
+                    <form method="post" class="form-horizontal" id="{$Think.CONTROLLER_NAME}_{$Think.MODULE_NAME}_{$Think.ACTION_NAME}_form">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">上级菜单</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" name="info[parentid]" id="{$Think.CONTROLLER_NAME}_{$Think.MODULE_NAME}_{$Think.ACTION_NAME}_parentid" required />
+                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 必填</span>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">菜单名称</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control required" name="info[catname]" id="{$Think.CONTROLLER_NAME}_{$Think.MODULE_NAME}_{$Think.ACTION_NAME}_name" value="{$info['catname']}" required>
+                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 必填</span>
+                            </div>
+                        </div>
+
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">排序</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="info[listorder]" id="{$Think.CONTROLLER_NAME}_{$Think.MODULE_NAME}_{$Think.ACTION_NAME}_listorder" value="{$info['listorder']}" required>
+                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 必填</span>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">是否显示菜单
+                            </label>
+
+                            <div class="col-sm-10">
+
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" <eq name="info.display" value="1">checked</eq> name="info[display]" value="1" id="optionsRadios1" >是</label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" <eq name="info.display" value="0">checked</eq> value="0" id="optionsRadios2" name="info[display]">否</label>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</block>
