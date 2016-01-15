@@ -8,10 +8,15 @@
 namespace Admin\Controller;
 use Think\Controller;
 class NewsController extends CommonController {
-    public function newsList(){
+    public function newsList( $offset=0, $limit=10, $search = array(), $sort = 'listorder', $order = 'desc'){
         if(IS_POST){
             $news_db=D('News');
-            $list=$news_db->select();
+            $where=array();
+            $limit1=$offset. "," . $limit;
+            $total = $news_db->where($where)->count();
+
+            $rows=$news_db->limit($limit1)->select();
+            $list= array('total'=>$total, 'rows'=>$rows);
             $this->ajaxReturn($list);
         }
         else{
