@@ -8,11 +8,18 @@
 namespace Admin\Controller;
 use Think\Controller;
 class NewsController extends CommonController {
-    public function newsList( $offset=0, $limit=10, $search = array(), $sort = 'listorder', $order = 'desc'){
+    /**
+     * @param int $offset
+     * @param int $limit
+     * @param array $search
+     * @param string $sort
+     * @param string $order
+     */
+    public function newsList($offset=0, $limit=10, $search = array(), $sort = 'listorder', $order = 'desc'){
         if(IS_POST){
             $news_db=D('News');
             $where=array();
-            $limit1=$offset. "," . $limit;
+            $limit1=$offset . "," . $limit;
             $total = $news_db->where($where)->count();
 
             $rows=$news_db->limit($limit1)->select();
