@@ -5,6 +5,7 @@
 <block name="script">
     <script src="__JS__/plugins/bootstrap-table/bootstrap-table.min.js"></script>
     <script src="__JS__/plugins/bootstrap-table/bootstrap-table-mobile.min.js"></script>
+    <script src="__JS__/plugins/bootstrap-table/bootstrap-table-toolbar.js"></script>
     <script src="__JS__/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
     <script type="text/javascript">
         $(function(){
@@ -12,13 +13,17 @@
                 method:'post',
                 url:"{:U('News/newsList')}",
                 search:"true",
+                //advancedSearch:"true",
+                //idTable:"advancedTable",
+                toolbar:"#toolbar",
+                toolbarAlign:"right",
                 showRefresh:true,
                 showColumns:true,
                 //分页
                 sidePagination:"server",
                 contentType: "application/x-www-form-urlencoded",
                 pagination:true,
-                pageSize:2,
+                pageSize:20,
                 columns:[
                     {title:'id',field:'id',width:'5%',checkbox:true},
                     {title:'标题',field:'title',width:'50%'},
@@ -51,6 +56,9 @@
                     </div>
                 </div>
                 <div class="ibox-content">
+                    <div id="toolbar">
+                                ffdfad
+                    </div>
                     <table id="grid"></table>
                 </div>
             </div>
