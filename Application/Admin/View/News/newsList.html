@@ -1,38 +1,53 @@
 <extend name="Public/mainbase"/>
 <block name="linkcss">
     <link href="__CSS__/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    <link href="__CSS__/plugins/datapicker/datepicker3.css" rel="stylesheet">
 </block>
 <block name="script">
     <script src="__JS__/plugins/bootstrap-table/bootstrap-table.min.js"></script>
     <script src="__JS__/plugins/bootstrap-table/bootstrap-table-mobile.min.js"></script>
     <script src="__JS__/plugins/bootstrap-table/bootstrap-table-toolbar.js"></script>
     <script src="__JS__/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+    <script src="__JS__/plugins/datapicker/bootstrap-datepicker.js"></script>
     <script type="text/javascript">
-        $(function(){
+        $(function () {
+            $(".input-daterange").datepicker({keyboardNavigation: !1, forceParse: !1, autoclose: !0});
+            $("#searchBtn").click(function(){
+                $("#grid").bootstrapTable("refresh",{query: {search:{title:'ffff',username:"admin"}}});
+            });
             $("#grid").bootstrapTable({
-                method:'post',
-                url:"{:U('News/newsList')}",
-                search:"true",
+                method: 'post',
+                url: "{:U('News/newsList')}",
+                //search:"true",
                 //advancedSearch:"true",
                 //idTable:"advancedTable",
-                toolbar:"#toolbar",
-                toolbarAlign:"right",
-                showRefresh:true,
-                showColumns:true,
+                //queryParams:queryParams,
+                toolbar: "#toolbar",
+                toolbarAlign: "left",
+                showRefresh: true,
+                showColumns: true,
                 //分页
-                sidePagination:"server",
+                sidePagination: "server",
                 contentType: "application/x-www-form-urlencoded",
-                pagination:true,
-                pageSize:20,
-                columns:[
-                    {title:'id',field:'id',width:'5%',checkbox:true},
-                    {title:'标题',field:'title',width:'50%'},
-                    {title:'发布用户',field:'username',width:'10%'},
-                    {title:'发布时间',field:'inputtime',width:'20%',formatter:'getLocalTime',sortable:"true"},
-                    {title:'最后修改时间',field:'updatetime',width:'20%',formatter:'getLocalTime',sortable:"true"},
+                pagination: true,
+                pageSize: 20,
+                columns: [
+                    {title: 'id', field: 'id', width: '5%', checkbox: true},
+                    {title: '标题', field: 'title', width: '50%'},
+                    {title: '发布用户', field: 'username', width: '10%'},
+                    {title: '发布时间', field: 'inputtime', width: '20%', formatter: 'getLocalTime', sortable: "true"},
+                    {title: '最后修改时间', field: 'updatetime', width: '20%', formatter: 'getLocalTime', sortable: "true"},
                 ]
             });
         });
+        function queryParams() {
+            var params = {};
+            /*$('#toolbar').find('input[name]').each(function () {
+                params[$(this).attr('name')] = $(this).val();
+            });*/
+            params['title']=$("#title").val();
+            return params;
+        }
 
 
     </script>
@@ -57,7 +72,9 @@
                 </div>
                 <div class="ibox-content">
                     <div id="toolbar">
-                                ffdfad
+                        <button class="btn btn-primary " id="btn-search" type="button" data-toggle="modal"
+                                data-target="#searchModal"><i class="fa fa-search"></i>&nbsp;搜索
+                        </button>
                     </div>
                     <table id="grid"></table>
                 </div>
@@ -65,4 +82,59 @@
         </div>
 
     </div>
+    <!-- 模态框（Modal） -->
+    <div class="modal fade" id="searchModal" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close"
+                            data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        高级搜索
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">标题：</label>
+
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control input-md" name="title" id="title"
+                                       id="{$Think.CONTROLLER_NAME}_{$Think.MODULE_NAME}_{$Think.ACTION_NAME}_title"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">作者：</label>
+
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control input-md" name="username"
+                                       id="{$Think.CONTROLLER_NAME}_{$Think.MODULE_NAME}_{$Think.ACTION_NAME}_username"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">发布时间：</label>
+
+                            <div class="col-sm-6">
+                                <div class="input-daterange input-group" id="datepicker">
+                                    <span style="position: relative; z-index: 9999;"><input class="input-sm form-control" name="start"  type="text"></span>
+                                    <span class="input-group-addon">到</span>
+                                    <span style="position: relative; z-index: 9999;"><input class="input-sm form-control" name="end" type="text"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">关闭
+                    </button>
+                    <button type="button" id="searchBtn" class="btn btn-primary">
+                        搜索
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
 </block>
