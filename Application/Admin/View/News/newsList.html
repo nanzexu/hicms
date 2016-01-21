@@ -13,7 +13,9 @@
         $(function () {
             $(".input-daterange").datepicker({keyboardNavigation: !1, forceParse: !1, autoclose: !0});
             $("#searchBtn").click(function(){
-                $("#grid").bootstrapTable("refresh",{query: {search:{title:'ffff',username:"admin"}}});
+                //$("#grid").bootstrapTable("refresh",{query: {search:{title:'ffff',username:"admin"}}});
+                $("#grid").bootstrapTable("refresh");
+                $('#searchModal').modal('hide');
             });
             $("#grid").bootstrapTable({
                 method: 'post',
@@ -21,7 +23,7 @@
                 //search:"true",
                 //advancedSearch:"true",
                 //idTable:"advancedTable",
-                //queryParams:queryParams,
+                queryParams:queryParams,
                 toolbar: "#toolbar",
                 toolbarAlign: "left",
                 showRefresh: true,
@@ -42,10 +44,10 @@
         });
         function queryParams() {
             var params = {};
-            /*$('#toolbar').find('input[name]').each(function () {
-                params[$(this).attr('name')] = $(this).val();
-            });*/
-            params['title']=$("#title").val();
+            $('#searchForm').find('input[name]').each(function () {
+                params['search['+$(this).attr('name')+']'] = $(this).val();
+            });
+            //params['search[title]']=$("#title").val();
             return params;
         }
 
@@ -97,7 +99,7 @@
                     </h4>
                 </div>
                 <div class="modal-body">
-                    <form class="form-horizontal">
+                    <form id="searchForm" class="form-horizontal">
                         <div class="form-group">
                             <label class="col-sm-4 control-label">标题：</label>
 
@@ -119,9 +121,9 @@
 
                             <div class="col-sm-6">
                                 <div class="input-daterange input-group" id="datepicker">
-                                    <span style="position: relative; z-index: 9999;"><input class="input-sm form-control" name="start"  type="text"></span>
+                                    <span style="position: relative; z-index: 9999;"><input class="input-sm form-control" name="inputtime_start"  type="text"></span>
                                     <span class="input-group-addon">到</span>
-                                    <span style="position: relative; z-index: 9999;"><input class="input-sm form-control" name="end" type="text"></span>
+                                    <span style="position: relative; z-index: 9999;"><input class="input-sm form-control" name="inputtime_end" type="text"></span>
                                 </div>
                             </div>
                         </div>
