@@ -19,11 +19,37 @@ class NewsController extends CommonController {
         if(IS_POST){
             $news_db=D('News');
             $where=array();
+            foreach ($search as $k=>$v){
+                if(!$v) continue;
+                switch ($k){
+                    case 'inputtime_start':
+                        if(!preg_match("/^\d{4}(-\d{2}){2}$/", $v)){
+                            unset($search[$k]);
+                            continue;
+                        }
+                        if($search['inputtime_start'] && $search['inputtime_end'] < $v) $v = $search['inputtime_end'];
+                        $v = strtotime($v);
+                        $where[] = "`inputtime` >= '{$v}'";
+                        break;
+                    case 'inputtime_end':
+                        if(!preg_match("/^\d{4}(-\d{2}){2}$/", $v)){
+                            unset($search[$k]);
+                            continue;
+                        }
+                        if($search['inputtime_begin'] && $search['inputtime_begin'] > $v) $v = $search['inputtime_begin'];
+                        $v = strtotime($v);
+                        $where[] = "`inputtime` <= '{$v}'";
+                        break;
+                    default:
+                        $where[$k]=array('LIKE','%'.$v.'%');
+                }
+            }
+            //$where = implode(' and ', $where);
             $limit1=$offset . "," . $limit;
             $total = $news_db->where($where)->count();
 
-            $rows=$news_db->limit($limit1)->select();
-            $list= array('total'=>$total, 'rows'=>$rows);
+            $rows=$news_db->where($where)->limit($limit1)->select();
+            $list= array('total'=>$total, 'rows'=>$rows,'search'=>$where,'sql'=>$news_db->getLastSql());
             $this->ajaxReturn($list);
         }
         else{
