@@ -125,9 +125,10 @@ class CommonController extends Controller {
         // 上传文件
         $info   =   $upload->upload();
         if(!$info) {// 上传错误提示错误信息
-            $this->error($upload->getError());
+            $this->ajaxReturn(array("0",$upload->getError()));
+
         }else{// 上传成功
-            $this->success('上传成功！');
+            $this->ajaxReturn($info);
         }
 
     }
