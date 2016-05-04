@@ -9,7 +9,9 @@
 namespace Admin\Controller;
 
 
-class SettingController
-{
+class SettingController extends CommonController{
+    public function site(){
+        $this->display();
+    }
 
 }
