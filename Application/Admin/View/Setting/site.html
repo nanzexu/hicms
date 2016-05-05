@@ -9,103 +9,171 @@
     <script src="__JS__/plugins/prettyfile/bootstrap-prettyfile.js"></script>
     <script src="__JS__/plugins/switchery/switchery.js"></script>
     <script src="__JS__/plugins/iCheck/icheck.min.js"></script>
+    <script src="__JS__/ajaxfileupload.js"></script>
     <script type="text/javascript">
-        $(".i-checks").iCheck({checkboxClass:"icheckbox_square-green",radioClass:"iradio_square-green",});
-        $( 'input[type="file"]' ).prettyFile();
-        // 初始化Web Uploader
-        var ratio = window.devicePixelRatio || 1,
+        $(function () {
+
+            //网站开关
+            if("{:readSettings('system_status')}"=="on"){
+                $("#system_status").attr("checked",true);
+            }
+            else{
+                $("#system_status").attr("checked",false);
+            }
+            if("{:readSettings('payOnDelivery_status')}"=="on"){
+                $("#payOnDelivery_status").attr("checked",true);
+            }
+            else{
+                $("#payOnDelivery_status").attr("checked",false);
+            }
+            //网站运行模式
+            $("#URL_MODEL").val({:readSettings('URL_MODEL')});
+            $("#system_theme").val("{:readSettings('system_theme')}");
+            $("#system_template").val("{:readSettings('system_template')}");
+
+            var order_options={:readSettings('order_options')};
+            $.each(order_options, function(i,val){
+                $("input:checkbox[value='"+val+"']").attr('checked',true);
+            });
+            $("input[name='show_notice'][value='{:readSettings('show_notice')}'").attr("checked",true);
+            $("input[name='record_order'][value='{:readSettings('record_order')}'").attr("checked",true);
+            $("#save").click(function(){
+               $.post("{:U('Setting/site')}", $("form").serialize(), function(data){
+                    if(!data.status){
+                        swal({title:"发生了什么？",text:data.info,type:"error"});
+                        return;
+                    }else{
+                        swal({title:"太帅了",text:data.info,type:"success"});
+                        return;
+                    }
+                },'json');
+            });
+            $(".i-checks").iCheck({checkboxClass:"icheckbox_square-green",radioClass:"iradio_square-green"});
+            $( 'input[type="file"]' ).prettyFile();
+            $( 'input[type="file"]').change(function(){
+                var id=$(this).attr('id');
+                var hiddenname=$(this).attr('data-name');
+                $.ajaxFileUpload({
+                    url: "{:U('Setting/uploadOne')}", //用于文件上传的服务器端请求地址
+                    secureuri: false, //是否需要安全协议，一般设置为false
+                    fileElementId: id, //文件上传域的ID
+                    dataType: 'json', //返回值类型 一般设置为json
+                    data:{'fileElementId':id},
+                    success: function (data, status)  //服务器成功响应处理函数
+                    {
+                        //$("#img1").attr("src", data.imgurl);
+                        if(!status){
+                            alert(data.msg);
+                        }
+                        else {
+                            //alert(hiddenname);
+                            //alert(data.savename);
+                            $( 'input[name="'+hiddenname+'"]').val(data.savepath+data.savename);
+                        }
+
+                    },
+                    error: function (data, status, e)//服务器响应失败处理函数
+                    {
+                        alert(e);
+                    }
+                });
+            });
+            // 初始化Web Uploader
+            var ratio = window.devicePixelRatio || 1,
 
             // 缩略图大小
-                thumbnailWidth = 100 * ratio,
-                thumbnailHeight = 100 * ratio;
-        var uploader = WebUploader.create({
+                    thumbnailWidth = 100 * ratio,
+                    thumbnailHeight = 100 * ratio;
+            var uploader = WebUploader.create({
 
-            // 选完文件后，是否自动上传。
-            auto: true,
+                // 选完文件后，是否自动上传。
+                auto: true,
 
-            // swf文件路径
-            swf: '__JS__/plugins/webuploader/Uploader.swf',
+                // swf文件路径
+                swf: '__JS__/plugins/webuploader/Uploader.swf',
 
-            // 文件接收服务端。
-            server: "{:U('Setting/uploadOne')}",
+                // 文件接收服务端。
+                server: "{:U('Setting/uploadOne')}",
 
-            // 选择文件的按钮。可选。
-            // 内部根据当前运行是创建，可能是input元素，也可能是flash.
-            pick: '#filePicker',
+                // 选择文件的按钮。可选。
+                // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+                pick: '#filePicker',
 
-            // 只允许选择图片文件。
-            accept: {
-                title: 'Images',
-                extensions: 'gif,jpg,jpeg,bmp,png',
-                mimeTypes: 'image/*'
-            }
-        });
-        // 当有文件添加进来的时候
-        uploader.on( 'fileQueued', function( file ) {
-            var $li = $(
-                            '<div id="' + file.id + '" class="file-item thumbnail">' +
-                            '<img>' +
-                            '<div class="info">' + file.name + '</div>' +
-                            '</div>'
-                    ),
-                    $img = $li.find('img');
+                // 只允许选择图片文件。
+                accept: {
+                    title: 'Images',
+                    extensions: 'gif,jpg,jpeg,bmp,png',
+                    mimeTypes: 'image/*'
+                }
+            });
+            // 当有文件添加进来的时候
+            uploader.on( 'fileQueued', function( file ) {
+                var $li = $(
+                                '<div id="' + file.id + '" class="file-item thumbnail">' +
+                                '<img>' +
+                                '<div class="info">' + file.name + '</div>' +
+                                '</div>'
+                        ),
+                        $img = $li.find('img');
 
 
-            // $list为容器jQuery实例
-            $("#fileList").append( $li );
+                // $list为容器jQuery实例
+                $("#fileList").append( $li );
 
-            // 创建缩略图
-            // 如果为非图片文件，可以不用调用此方法。
-            // thumbnailWidth x thumbnailHeight 为 100 x 100
-            uploader.makeThumb( file, function( error, src ) {
-                if ( error ) {
-                    $img.replaceWith('<span>不能预览</span>');
-                    return;
+                // 创建缩略图
+                // 如果为非图片文件，可以不用调用此方法。
+                // thumbnailWidth x thumbnailHeight 为 100 x 100
+                uploader.makeThumb( file, function( error, src ) {
+                    if ( error ) {
+                        $img.replaceWith('<span>不能预览</span>');
+                        return;
+                    }
+
+                    $img.attr( 'src', src );
+                }, thumbnailWidth, thumbnailHeight );
+            });
+
+            // 文件上传过程中创建进度条实时显示。
+            uploader.on( 'uploadProgress', function( file, percentage ) {
+                var $li = $( '#'+file.id ),
+                        $percent = $li.find('.progress .progress-bar');
+
+                // 避免重复创建
+                if ( !$percent.length ) {
+                    $percent = $('<div class="progress progress-striped active">' +
+                            '<div class="progress-bar" role="progressbar" style="width: 0%">' +
+                            '</div>' +
+                            '</div>').appendTo( $li ).find('.progress-bar');
                 }
 
-                $img.attr( 'src', src );
-            }, thumbnailWidth, thumbnailHeight );
+                $li.find('p.state').text('上传中');
+
+                $percent.css( 'width', percentage * 100 + '%' );
+            });
+            // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+            uploader.on( 'uploadSuccess', function( file ) {
+                $( '#'+file.id ).addClass('upload-state-done');
+            });
+
+            // 文件上传失败，显示上传出错。
+            uploader.on( 'uploadError', function( file ) {
+                var $li = $( '#'+file.id ),
+                        $error = $li.find('div.error');
+
+                // 避免重复创建
+                if ( !$error.length ) {
+                    $error = $('<div class="error"></div>').appendTo( $li );
+                }
+
+                $error.text('上传失败');
+            });
+
+            // 完成上传完了，成功或者失败，先删除进度条。
+            uploader.on( 'uploadComplete', function( file ) {
+                $( '#'+file.id ).find('.progress').remove();
+            });
         });
 
-        // 文件上传过程中创建进度条实时显示。
-        uploader.on( 'uploadProgress', function( file, percentage ) {
-            var $li = $( '#'+file.id ),
-                    $percent = $li.find('.progress .progress-bar');
-
-            // 避免重复创建
-            if ( !$percent.length ) {
-                $percent = $('<div class="progress progress-striped active">' +
-                        '<div class="progress-bar" role="progressbar" style="width: 0%">' +
-                        '</div>' +
-                        '</div>').appendTo( $li ).find('.progress-bar');
-            }
-
-            $li.find('p.state').text('上传中');
-
-            $percent.css( 'width', percentage * 100 + '%' );
-        });
-        // 文件上传成功，给item添加成功class, 用样式标记上传成功。
-        uploader.on( 'uploadSuccess', function( file ) {
-            $( '#'+file.id ).addClass('upload-state-done');
-        });
-
-        // 文件上传失败，显示上传出错。
-        uploader.on( 'uploadError', function( file ) {
-            var $li = $( '#'+file.id ),
-                    $error = $li.find('div.error');
-
-            // 避免重复创建
-            if ( !$error.length ) {
-                $error = $('<div class="error"></div>').appendTo( $li );
-            }
-
-            $error.text('上传失败');
-        });
-
-        // 完成上传完了，成功或者失败，先删除进度条。
-        uploader.on( 'uploadComplete', function( file ) {
-            $( '#'+file.id ).find('.progress').remove();
-        });
 
 
 
@@ -130,7 +198,7 @@
                     </div>
                 </div>
                 <div class="ibox-content">
-                    <form method="get" class="form-horizontal">
+                    <form method="post" enctype="multipart/form-data" onsubmit="return false;" class="form-horizontal" name="{$Think.CONTROLLER_NAME}_{$Think.MODULE_NAME}_{$Think.ACTION_NAME}_form">
                     <div class="tabs-container">
                         <ul class="nav nav-tabs">
                             <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true"> 基本信息</a>
@@ -151,7 +219,7 @@
                                         <label class="col-sm-2 control-label">网站标题</label>
 
                                         <div class="col-sm-10">
-                                            <input type="text" name="title" id="title" class="form-control">
+                                            <input type="text" name="title" id="title" class="form-control" value="{:readSettings('title')}">
                                         </div>
                                     </div>
                                     <div class="hr-line-dashed"></div>
@@ -159,7 +227,7 @@
                                         <label class="col-sm-2 control-label">网站关键词</label>
 
                                         <div class="col-sm-10">
-                                            <input type="text" name="keyword" id="keyword" class="form-control">
+                                            <input type="text" name="keyword" id="keyword" class="form-control" value="{:readSettings('keyword')}">
                                         </div>
                                     </div>
                                     <!--<div class="form-group">
@@ -175,21 +243,25 @@
                                         <label class="col-sm-2 control-label">PC端Logo</label>
 
                                         <div class="col-sm-10">
-                                            <input type="file" id="pc_logo" name="pc_logo" class="form-control">
+                                            <input type="file" id="pc_logo_input" name="pc_logo_input" data-name="pc_logo"  class="form-control">
+                                            <input type="hidden" name="pc_logo" value="{:readSettings('pc_logo')}" >
+                                            <span class="help-block m-b-none">{:readSettings('pc_logo')}</span>
                                         </div>
                                     </div>
                                     <div class="hr-line-dashed"></div>
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">WAP端Logo</label>
                                         <div class="col-sm-10">
-                                            <input type="file" id="wap_logo" name="wap_log" class="form-control">
+                                            <input type="file" id="wap_logo_input" name="wap_logo_input" data-name="wap_logo"  class="form-control">
+                                            <input type="hidden" name="wap_logo" value="{:readSettings('wap_logo')}" >
+                                            <span class="help-block m-b-none">{:readSettings('wap_logo')}</span>
                                         </div>
                                     </div>
                                     <div class="hr-line-dashed"></div>
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">网站描述</label>
                                         <div class="col-sm-10">
-                                            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                                            <textarea class="form-control" id="description" name="description" rows="3">{:readSettings('description')}</textarea>
                                         </div>
                                     </div>
                                     <div class="hr-line-dashed"></div>
@@ -197,7 +269,7 @@
                                         <label class="col-sm-2 control-label">联系电话</label>
 
                                         <div class="col-sm-10">
-                                            <input type="text" name="tel" id="tel" class="form-control">
+                                            <input type="text" name="contact_tel" id="contact_tel" class="form-control" value="{:readSettings('contact_tel')}">
                                         </div>
                                     </div>
                                     <div class="hr-line-dashed"></div>
@@ -205,9 +277,16 @@
                                         <label class="col-sm-2 control-label">联系QQ</label>
 
                                         <div class="col-sm-10">
-                                            <input type="text" name="qq" id="qq" class="form-control">
+                                            <input type="text" name="contact_qq" id="contact_qq" class="form-control" value="{:readSettings('contact_qq')}">
                                         </div>
                                     </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">底部信息</label>
+                                        <div class="col-sm-10">
+                                            <textarea class="form-control" id="footer" name="footer" rows="3">{:readSettings('footer')}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="hr-line-dashed"></div>
                                 </div>
                             </div>
                             <div id="tab-2" class="tab-pane">
@@ -217,8 +296,8 @@
 
                                         <div class="col-sm-10">
                                             <div class="onoffswitch" style="margin-top: 5px;">
-                                                <input type="checkbox" checked class="onoffswitch-checkbox" id="example1">
-                                                <label class="onoffswitch-label" for="example1">
+                                                <input type="checkbox"  class="onoffswitch-checkbox" name="system_status" id="system_status" >
+                                                <label class="onoffswitch-label" for="system_status">
                                                     <span class="onoffswitch-inner"></span>
                                                     <span class="onoffswitch-switch"></span>
                                                 </label>
@@ -230,7 +309,7 @@
                                         <label class="col-sm-2 control-label">网站关闭信息</label>
 
                                         <div class="col-sm-10">
-                                            <input type="text" name="qq" id="qq" class="form-control">
+                                            <input type="text" name="system_close_info" id="system_close_info" class="form-control" value="{:readSettings('system_close_info')}">
                                             <span class="help-block m-b-none">填写文字则提示，填写网址则跳转，如：http://alizi.net</span>
                                         </div>
                                     </div>
@@ -239,9 +318,9 @@
                                         <label class="col-sm-2 control-label">网站运行模式</label>
 
                                         <div class="col-sm-10">
-                                            <select class="form-control m-b" name="account">
-                                                <option>动态模式</option>
-                                                <option>伪静态模式</option>
+                                            <select class="form-control m-b" name="URL_MODEL" id="URL_MODEL">
+                                                <option value="1">动态模式</option>
+                                                <option value="2">伪静态模式</option>
                                             </select>
                                         </div>
                                     </div>
@@ -250,9 +329,9 @@
                                         <label class="col-sm-2 control-label">网站主题</label>
 
                                         <div class="col-sm-10">
-                                            <select class="form-control m-b" name="account">
-                                                <option>灰色主题</option>
-                                                <option>金色主题</option>
+                                            <select class="form-control m-b" name="system_theme" id="system_theme">
+                                                <option value="hui">灰色主题</option>
+                                                <option value="jin">金色主题</option>
                                             </select>
                                         </div>
                                     </div>
@@ -261,9 +340,9 @@
                                         <label class="col-sm-2 control-label">表单模板</label>
 
                                         <div class="col-sm-10">
-                                            <select class="form-control m-b" name="">
-                                                <option>经典模式</option>
-                                                <option>现代模式</option>
+                                            <select class="form-control m-b" name="system_template" id="system_template">
+                                                <option value="simple">经典模式</option>
+                                                <option value="new">现代模式</option>
                                             </select>
                                         </div>
                                     </div>
@@ -272,21 +351,21 @@
                                         <label class="col-sm-2 control-label">表单选项</label>
 
                                         <div class="col-sm-10" style="padding-top: 5px;">
-                                            <input type="checkbox" value=""> <i></i> 产品价格</label>
-                                            <input type="checkbox" value=""> <i></i> 已售数量</label>
-                                            <input type="checkbox" value=""> <i></i> 订购数量</label>
-                                            <input type="checkbox" value=""> <i></i> 支付方式</label>
-                                            <input type="checkbox" value=""> <i></i> 选择时间</label>
-                                            <input type="checkbox" value=""> <i></i> 客户姓名</label>
-                                            <input type="checkbox" value=""> <i></i> 客户手机</label>
-                                            <input type="checkbox" value=""> <i></i> 客户电话</label>
-                                            <input type="checkbox" value=""> <i></i> 地区选择</label>
-                                            <input type="checkbox" value=""> <i></i> 详细地址</label>
-                                            <input type="checkbox" value=""> <i></i> 邮政编码</label>
-                                            <input type="checkbox" value=""> <i></i> QQ 号码</label>
-                                            <input type="checkbox" value=""> <i></i> 电子邮箱</label>
-                                            <input type="checkbox" value=""> <i></i> 备注留言</label>
-                                            <input type="checkbox" value=""> <i></i> 验证号码</label>
+                                            <input type="checkbox" name="order_options[]" value="price"> <i></i> 产品价格</label>
+                                            <input type="checkbox" name="order_options[]" value="salenum"> <i></i> 已售数量</label>
+                                            <input type="checkbox" name="order_options[]" value="quantity"> <i></i> 订购数量</label>
+                                            <input type="checkbox" name="order_options[]" value="payment"> <i></i> 支付方式</label>
+                                            <input type="checkbox" name="order_options[]" value="datetime"> <i></i> 选择时间</label>
+                                            <input type="checkbox" name="order_options[]" value="name"> <i></i> 客户姓名</label>
+                                            <input type="checkbox" name="order_options[]" value="mobile"> <i></i> 客户手机</label>
+                                            <input type="checkbox" name="order_options[]" value="phone"> <i></i> 客户电话</label>
+                                            <input type="checkbox" name="order_options[]" value="region"> <i></i> 地区选择</label>
+                                            <input type="checkbox" name="order_options[]" value="address"> <i></i> 详细地址</label>
+                                            <input type="checkbox" name="order_options[]" value="zcode"> <i></i> 邮政编码</label>
+                                            <input type="checkbox" name="order_options[]" value="qq"> <i></i> QQ 号码</label>
+                                            <input type="checkbox" name="order_options[]" value="mail"> <i></i> 电子邮箱</label>
+                                            <input type="checkbox" name="order_options[]" value="remark"> <i></i> 备注留言</label>
+                                            <input type="checkbox" name="order_options[]" value="verify"> <i></i> 验证号码</label>
                                         </div>
                                     </div>
                                     <div class="hr-line-dashed"></div>
@@ -297,15 +376,15 @@
 
                                             <div class="radio i-checks">
                                                 <label>
-                                                    <input type="radio" value="option1" name="a"> <i></i> 不显示</label>
+                                                    <input type="radio" value="0" name="show_notice"> <i></i> 不显示</label>
                                             </div>
                                             <div class="radio i-checks">
                                                 <label>
-                                                    <input type="radio" checked="" value="option2" name="a"> <i></i> 下方显示</label>
+                                                    <input type="radio"  value="1" name="show_notice"> <i></i> 下方显示</label>
                                             </div>
                                             <div class="radio i-checks">
                                                 <label>
-                                                    <input type="radio" checked="" value="option2" name="a"> <i></i> 右侧显示</label>
+                                                    <input type="radio"  value="2" name="show_notice"> <i></i> 右侧显示</label>
                                             </div>
 
                                         </div>
@@ -318,11 +397,11 @@
 
                                             <div class="radio i-checks">
                                                 <label>
-                                                    <input type="radio" value="option1" name="a"> <i></i> 不记录</label>
+                                                    <input type="radio" value="0" name="record_order"> <i></i> 不记录</label>
                                             </div>
                                             <div class="radio i-checks">
                                                 <label>
-                                                    <input type="radio" checked="" value="option2" name="a"> <i></i> 记录</label>
+                                                    <input type="radio"  value="1" name="record_order"> <i></i> 记录</label>
                                             </div>
                                             <span class="help-block m-b-none">记录则客户再次下单时不需填写信息</span>
                                         </div>
@@ -336,8 +415,8 @@
                                         <label class="col-sm-2 control-label">货到付款</label>
                                         <div class="col-sm-10">
                                             <div class="onoffswitch" style="margin-top: 5px;">
-                                                <input type="checkbox" checked class="onoffswitch-checkbox" id="example2">
-                                                <label class="onoffswitch-label" for="example2">
+                                                <input type="checkbox"  class="onoffswitch-checkbox" id="payOnDelivery_status" name="payOnDelivery_status">
+                                                <label class="onoffswitch-label" for="payOnDelivery_status">
                                                     <span class="onoffswitch-inner"></span>
                                                     <span class="onoffswitch-switch"></span>
                                                 </label>
@@ -350,7 +429,7 @@
 
                                         <div class="col-sm-10">
                                             <div class="input-group m-b"><span class="input-group-addon">&yen;</span>
-                                                <input type="text" class="form-control"> <span class="input-group-addon">.00</span>
+                                                <input type="text" class="form-control" name="payOnDelivery_fee" value="{:readSettings('payOnDelivery_fee')}"> <span class="input-group-addon">.00</span>
                                             </div>
                                         </div>
                                     </div>
@@ -359,7 +438,7 @@
                                         <label class="col-sm-2 control-label">选择到付时提示</label>
 
                                         <div class="col-sm-10">
-                                            <textarea class="form-control" id="info" name="info" rows="3"></textarea>
+                                            <textarea class="form-control" id="payOnDelivery_info" name="payOnDelivery_info" rows="3">{:readSettings('payOnDelivery_info')}</textarea>
                                         </div>
                                     </div>
                                     <div class="hr-line-dashed"></div>
@@ -371,7 +450,7 @@
                                         <label class="col-sm-2 control-label">手机号下单限制</label>
                                         <div class="col-sm-2">
                                             <div class="input-group m-b">
-                                                <input type="text" class="form-control" value="10"> <span class="input-group-addon">笔</span>
+                                                <input type="text" class="form-control"  name="safe_mobile_limit" value="{:readSettings('safe_mobile_limit')}"> <span class="input-group-addon">笔</span>
                                             </div>
                                             <span class="help-block m-b-none">一个手机每天可对某一产品下单笔数</span>
                                         </div>
@@ -381,7 +460,7 @@
                                         <label class="col-sm-2 control-label">下单间隔限制</label>
                                         <div class="col-sm-2">
                                             <div class="input-group m-b">
-                                                <input type="text" class="form-control" value="10"> <span class="input-group-addon">秒</span>
+                                                <input type="text" class="form-control"  name="safe_order_interval" value="{:readSettings('safe_order_interval')}"> <span class="input-group-addon">秒</span>
                                             </div>
                                             <span class="help-block m-b-none">对同一产品设置下单间隔，设置时长可以有效防止重复下单</span>
                                         </div>
@@ -391,7 +470,7 @@
                                         <label class="col-sm-2 control-label">IP下单限制</label>
                                         <div class="col-sm-2">
                                             <div class="input-group m-b">
-                                                <input type="text" class="form-control" value="0"> <span class="input-group-addon">笔</span>
+                                                <input type="text" class="form-control"  name="safe_ip_limit" value="{:readSettings('safe_ip_limit')}"> <span class="input-group-addon">笔</span>
                                             </div>
                                             <span class="help-block m-b-none">限制每个IP每小时可下单笔数，0 则不限制</span>
                                         </div>
@@ -400,7 +479,7 @@
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">黑名单IP</label>
                                         <div class="col-sm-10">
-                                            <textarea class="form-control" id="banip" name="info" rows="3"></textarea>
+                                            <textarea class="form-control" id="safe_ip_denied" name="safe_ip_denied" rows="3">{:readSettings('safe_ip_denied')}</textarea>
                                             <span class="help-block m-b-none"> 每个IP用#分隔开，IP段可用*号代替</span>
                                         </div>
                                     </div>
@@ -414,8 +493,7 @@
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
-                                <button class="btn btn-primary" type="submit">保存内容</button>
-                                <button class="btn btn-white" type="submit">取消</button>
+                                <button class="btn btn-primary" id="save" type="submit">保存内容</button>
                             </div>
                         </div>
                     </form>

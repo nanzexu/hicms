@@ -1,7 +1,18 @@
 
 jQuery.extend({
-	
 
+
+    handleError: function( s, xhr, status, e )      {
+        // If a local callback was specified, fire it
+        if ( s.error ) {
+            s.error.call( s.context || s, xhr, status, e );
+        }
+
+        // Fire the global callback
+        if ( s.global ) {
+            (s.context ? jQuery(s.context) : jQuery.event).trigger( "ajaxError", [xhr, s, e] );
+        }
+    },
     createUploadIframe: function(id, uri)
 	{
 			//create frame
@@ -189,8 +200,14 @@ jQuery.extend({
         if ( type == "script" )
             jQuery.globalEval( data );
         // Get the JavaScript object, if JSON is used.
-        if ( type == "json" )
+        if ( type == "json" ){
+            if(data.indexOf('<pre>') != -1) {
+                data = data.substring(5, data.length-6);
+            }
             eval( "data = " + data );
+        }
+
+
         // evaluate scripts within html
         if ( type == "html" )
             jQuery("<div>").html(data).evalScripts();

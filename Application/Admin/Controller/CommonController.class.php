@@ -8,11 +8,18 @@
 namespace Admin\Controller;
 use Think\Controller;
 class CommonController extends Controller {
+    public $settings;
     function _initialize(){
         if(IS_AJAX && IS_GET) C('DEFAULT_AJAX_RETURN', 'html');
         self::check_admin();
         self::check_priv();
         self::manage_log();
+
+        //读取系统设置
+        $setting_db = M('Setting');
+        $this->settings=$setting_db->select();
+        $this->assign('settings',$this->settings);
+
 
         //记录上次每页显示数
         if(I('get.grid') && I('post.rows')) cookie('pagesize', I('post.rows', C('DATAGRID_PAGE_SIZE'), 'intVal'));
@@ -21,6 +28,7 @@ class CommonController extends Controller {
         $currentpos = $menu_db->currentPos(I('get.menuid'));  //栏目位置
         $this->assign('currentpos', $currentpos);
     }
+
     /**
      * 判断用户是否已经登陆
      */
@@ -116,7 +124,7 @@ class CommonController extends Controller {
     }
 
     //文件上传
-    public function uploadOne(){
+    public function uploadMore(){
         $upload = new \Think\Upload();// 实例化上传类
         $upload->maxSize   =     3145728 ;// 设置附件上传大小
         $upload->exts      =     array('jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
@@ -125,12 +133,34 @@ class CommonController extends Controller {
         // 上传文件
         $info   =   $upload->upload();
         if(!$info) {// 上传错误提示错误信息
-            $this->ajaxReturn(array("0",$upload->getError()));
+            $this->ajaxReturn(array("status"=>"0","msg"=>$upload->getError()));
 
         }else{// 上传成功
             $this->ajaxReturn($info);
         }
 
     }
+    public function uploadOne(){
+        $upload = new \Think\Upload();// 实例化上传类
+        $upload->maxSize   =     3145728 ;// 设置附件上传大小
+        $upload->exts      =     array('jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
+        $upload->rootPath  =     './Uploads/'; // 设置附件上传根目录
+        $upload->savePath  =     ''; // 设置附件上传（子）目录
+        $upload->saveName = 'com_create_guid';
+        // 上传文件
+        $info   =   $upload->upload();
+        //dump($info);
+
+        if(!$info) {// 上传错误提示错误信息
+            $this->ajaxReturn(array("status"=>0,"msg"=>$upload->getError()));
+
+        }else{// 上传成功
+            //dump($info[I('post.fileElementId')]);
+            $this->ajaxReturn($info[I('post.fileElementId')]);
+        }
+
+    }
+
+
 }
 ?>
