@@ -20,6 +20,22 @@ class CommonController extends Controller {
         $this->settings=$setting_db->select();
         $this->assign('settings',$this->settings);
 
+        //读取产品信息
+        $goodone_db=D("Goodone");
+        $goodinfo=$goodone_db->select();
+        foreach($goodinfo as $key=>$value){
+            if($value['name']=="item_name" or $value['name']=="item_price" or $value['name']=="item_photo" or $value['name']=="form_name"){
+                $good[$value['name']]=json_decode($value['value']);
+            }
+            elseif($value['name']=='remark'){
+                $good[$value['name']]=htmlspecialchars_decode($value['value']);
+            }
+            else{
+                $good[$value['name']]=$value['value'];
+            }
+        }
+        $this->assign("good",$good);
+
 
         //记录上次每页显示数
         if(I('get.grid') && I('post.rows')) cookie('pagesize', I('post.rows', C('DATAGRID_PAGE_SIZE'), 'intVal'));
@@ -130,6 +146,7 @@ class CommonController extends Controller {
         $upload->exts      =     array('jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
         $upload->rootPath  =     './Uploads/'; // 设置附件上传根目录
         $upload->savePath  =     ''; // 设置附件上传（子）目录
+        $upload->saveName =array('uniqid','');
         // 上传文件
         $info   =   $upload->upload($file);
         if(!$info) {// 上传错误提示错误信息
@@ -146,7 +163,7 @@ class CommonController extends Controller {
         $upload->exts      =     array('jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
         $upload->rootPath  =     './Uploads/'; // 设置附件上传根目录
         $upload->savePath  =     ''; // 设置附件上传（子）目录
-        $upload->saveName = 'com_create_guid';
+        $upload->saveName = array('uniqid','');
         // 上传文件
         $info   =   $upload->upload();
         //dump($info);

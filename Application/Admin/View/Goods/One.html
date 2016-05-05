@@ -32,11 +32,12 @@
                     sendFile(files[0], editor, welEditable);
                 }
             });
+            $(".summernote").code('{$good["remark"]}');
+            //$(".summernote").summernote("insertHtml",'{$good["remark"]}');
 
 
             $("#save").click(function(){
                 $("#remark").val($(".summernote").code());
-                alert($(".summernote").code());
                 $.post("{:U('Goods/One')}", $("form").serialize(), function(data){
                     if(!data.status){
                         swal({title:"发生了什么？",text:data.info,type:"error"});
@@ -49,10 +50,11 @@
             });
         });
         function itemAdd(){
-            var date=Date.parse(new Date());
+            var date=Date.parse(new Date())+getRandom(999);
             /**/
             $("#item").find(".file").attr("id","item_photo_input"+date);
             $("#item").find(".hidden").attr("id","item_photo"+date);
+            $("#item").find(".img").attr("id","img"+date);
 
             var html=$("#item").html();
             //$("#item").find('#item_photo_input'+date).remove();
@@ -65,7 +67,6 @@
                 var id=$(this).attr('id');
                 var name=$(this).attr('name');
                 var hiddeninput=$("#item_photo"+date);
-                alert(hiddeninput.attr("id"));
                 $.ajaxFileUpload({
                     url: "{:U('Goods/uploadOne')}", //用于文件上传的服务器端请求地址
                     secureuri: false, //是否需要安全协议，一般设置为false
@@ -79,8 +80,8 @@
                             alert(data.msg);
                         }
                         else {
-                            //alert(hiddenname);
-                            alert(data.savename);
+                            $("#img"+date).show();
+                            $("#img"+date).attr("src","__ROOT__/Uploads/"+data.savepath+data.savename);
                             hiddeninput.val(data.savepath+data.savename);
                         }
 
@@ -115,9 +116,9 @@
                 processData: false,
                 success: function(data,status) {
                     //$(".summernote").summernote("insertText","<p></p>");
-                    alert(status);
                     if(status){
-                        editor.insertImage(welEditable, "__ROOT__"+"/Uploads/"+data.savepath+data.savename);
+                        //editor.insertImage(welEditable, "__ROOT__"+"/Uploads/"+data.savepath+data.savename);
+                        $(".summernote").code($(".summernote").code()+"<img src='__ROOT__"+"/Uploads/"+data.savepath+data.savename+"' /><br>");
                     }
                     else{
                         alert(data.msg);
@@ -126,6 +127,11 @@
                 }
             });
         }
+        function getRandom(n){
+            return Math.floor(Math.random()*n+1)
+        }
+
+
     </script>
 </block>
 <block name="body">
@@ -152,7 +158,7 @@
                             <label class="col-sm-2 control-label">商品编号</label>
 
                             <div class="col-sm-10">
-                                <input type="text" name="sn" id="sn" class="form-control" value="{:readSettings('title')}">
+                                <input type="text" name="sn" id="sn" class="form-control" value="{$good['sn']}">
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
@@ -160,7 +166,7 @@
                             <label class="col-sm-2 control-label">名称</label>
 
                             <div class="col-sm-10">
-                                <input type="text" name="title" id="title" class="form-control" value="{:readSettings('title')}">
+                                <input type="text" name="title" id="title" class="form-control" value="{$good['title']}">
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
@@ -169,7 +175,7 @@
 
                             <div class="col-sm-10">
                                 <div class="input-group m-b"><span class="input-group-addon">&yen;</span>
-                                    <input type="text" class="form-control" name="original_price" value="{:readSettings('original_price')}"> <span class="input-group-addon">元</span>
+                                    <input type="text" class="form-control" name="original_price" value="{$good['original_price']}"> <span class="input-group-addon">元</span>
                                 </div>
                             </div>
                         </div>
@@ -179,7 +185,7 @@
 
                             <div class="col-sm-10">
                                 <div class="input-group m-b"><span class="input-group-addon">&yen;</span>
-                                    <input type="text" class="form-control" name="price" value="{:readSettings('price')}"> <span class="input-group-addon">元</span>
+                                    <input type="text" class="form-control" name="price" value="{$good['price']}"> <span class="input-group-addon">元</span>
                                 </div>
                             </div>
                         </div>
@@ -203,7 +209,65 @@
                             <label class="col-sm-2 control-label"></label>
                             <div class="col-sm-10">
                                 <ul class="list-group" id="item-list">
+                                    <foreach name="good.item_name" item="vo" key="k" >
+                                        <li class="list-group-item col-sm-10"  style="float: left;">
+                                            <div class="input-group m-b col-sm-2"  style="float: left">
+                                                <span class="input-group-addon">名称</span>
+                                                <input type="text" class="form-control" name="item_name[]" value="{$vo}">
+                                            </div>
+                                            <div class="input-group m-b col-sm-2"  style="float: left">
+                                                <span class="input-group-addon">价格</span>
+                                                <input type="text" class="form-control" name="item_price[]" value="{$good['item_price'][$k]}">
+                                                <span class="input-group-addon">元</span>
+                                            </div>
+                                            <div   style="float: left">
+                                                <input type="file"  name="item_photo_input" id="item_photo_input{$k}"  data-name="item_photo{$k}"  class="form-control file">
+                                                <input type="hidden" name="item_photo[]" id="item_photo{$k}" class="hidden" value="{$good['item_photo'][$k]}">
+                                            </div>
+                                            <div   style="float: left">
+                                                <button type="button" class="btn btn-danger" onclick="itemDel(this);">删除</button>
+                                            </div>
+                                            <img class="img" id="img{$k}" style="width: 100px" src="__ROOT__/Uploads/{$good['item_photo'][$k]}" />
 
+                                        </li>
+                                        <script type="text/javascript">
+
+                                            $("#item_photo_input{$k}").prettyFile({
+
+                                                text: "上传产品图片"
+                                            });
+                                            $("#item_photo_input{$k}").change(function(){
+                                                var id=$(this).attr('id');
+                                                var name=$(this).attr('name');
+                                                var hiddeninput=$("#"+$(this).attr("data-name"));
+                                                $.ajaxFileUpload({
+                                                    url: "{:U('Goods/uploadOne')}", //用于文件上传的服务器端请求地址
+                                                    secureuri: false, //是否需要安全协议，一般设置为false
+                                                    fileElementId: id, //文件上传域的ID
+                                                    dataType: 'json', //返回值类型 一般设置为json
+                                                    data:{'fileElementId':name},
+                                                    success: function (data, status)  //服务器成功响应处理函数
+                                                    {
+                                                        //$("#img1").attr("src", data.imgurl);
+                                                        if(!status){
+                                                            alert(data.msg);
+                                                        }
+                                                        else {
+                                                            $("#img{$k}").attr("src","__ROOT__/Uploads/"+data.savepath+data.savename);
+                                                            hiddeninput.val(data.savepath+data.savename);
+                                                        }
+
+                                                    },
+                                                    error: function (data, status, e)//服务器响应失败处理函数
+                                                    {
+                                                        alert(e);
+                                                    }
+                                                });
+
+                                            });
+                                        </script>
+
+                                    </foreach>
                                 </ul>
                             </div>
                         </div>
@@ -221,7 +285,19 @@
                             <label class="col-sm-2 control-label"></label>
                             <div class="col-sm-10">
                                 <ul class="list-group" id="form-list">
+                                    <foreach name="good.form_name" item="vo" >
+                                        <li class="list-group-item col-sm-10"  style="float: left;">
+                                            <div class="input-group m-b col-sm-2"  style="float: left">
+                                                <span class="input-group-addon">名称</span>
+                                                <input type="text" class="form-control" name="form_name[]" value="{$vo}">
+                                            </div>
+                                            <div   style="float: left">
+                                                <button type="button" class="btn btn-danger" onclick="formDel(this);">删除</button>
+                                            </div>
 
+
+                                        </li>
+                                    </foreach>
                                 </ul>
                             </div>
                         </div>
@@ -251,7 +327,7 @@
                             <label class="col-sm-2 control-label">附加内容：</label>
 
                             <div class="col-sm-10">
-                                <textarea class="form-control" id="footer" name="footer" rows="3">{:readSettings('footer')}</textarea>
+                                <textarea class="form-control" id="footer" name="footer" rows="3">{$good['footer']}</textarea>
                                 <span class="help-block m-b-none">附加内容可以添加JS/CSS</span>
                             </div>
                         </div>
@@ -278,12 +354,13 @@
                 <span class="input-group-addon">元</span>
             </div>
             <div   style="float: left">
-                <input type="file"  name="item_photo_input"  data-name="item_photo"  class="form-control file">
+                <input type="file"  name="item_photo_input"  data-name="item_photo"   class="form-control file">
                 <input type="hidden" name="item_photo[]" id="item_photo" class="hidden">
             </div>
             <div   style="float: left">
                 <button type="button" class="btn btn-danger" onclick="itemDel(this);">删除</button>
             </div>
+            <img class="img" style="width: 100px;display: none;" src="" />
 
         </li>
     </div>

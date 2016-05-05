@@ -13,33 +13,32 @@
     <link href="__CSS__/style.min.css?v=4.0.0" rel="stylesheet">
     <link href="__CSS__/plugins/sweetalert/sweetalert.css" rel="stylesheet">
     <block name="linkcss"></block>
+    <script src="__JS__/jquery.min.js?v=2.1.4"></script>
+    <script src="__JS__/bootstrap.min.js?v=3.3.5"></script>
+    <script src="__JS__/content.min.js?v=1.0.0"></script>
+    <script src="__JS__/plugins/layer/layer.min.js"></script>
+    <script src="__JS__/plugins/validate/jquery.validate.min.js"></script>
+    <script src="__JS__/plugins/validate/messages_zh.min.js"></script>
+    <script src="__JS__/plugins/sweetalert/sweetalert.min.js"></script>
+    <script src="__JS__/common.js"></script>
+    <script type="text/javascript">
+        $(function () {
 
+            $("#refresh").click(function () {
+                if ($.isFunction(window.reload)) {
+                    reload();
+                }
+            });
 
+        });
+    </script>
+    <block name="script">
+
+    </block>
 </head>
 <body class="gray-bg">
 <block name="body"></block>
 <hicms:modal  options="modal.options" fields="modal.fields" />
-<script src="__JS__/jquery.min.js?v=2.1.4"></script>
-<script src="__JS__/bootstrap.min.js?v=3.3.5"></script>
-<script src="__JS__/content.min.js?v=1.0.0"></script>
-<script src="__JS__/plugins/layer/layer.min.js"></script>
-<script src="__JS__/plugins/validate/jquery.validate.min.js"></script>
-<script src="__JS__/plugins/validate/messages_zh.min.js"></script>
-<script src="__JS__/plugins/sweetalert/sweetalert.min.js"></script>
-<script src="__JS__/common.js"></script>
-<script type="text/javascript">
-    $(function () {
 
-        $("#refresh").click(function () {
-            if ($.isFunction(window.reload)) {
-                reload();
-            }
-        });
-
-    });
-</script>
-<block name="script">
-
-</block>
 </body>
 </html>
