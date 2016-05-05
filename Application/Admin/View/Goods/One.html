@@ -1,0 +1,303 @@
+<extend name="Public/mainbase"/>
+<block name="linkcss">
+    <link rel="stylesheet" type="text/css" href="__CSS__/plugins/webuploader/webuploader.css">
+    <link rel="stylesheet" type="text/css" href="__CSS__/plugins/switchery/switchery.css">
+    <link rel="stylesheet" type="text/css" href="__CSS__/plugins/iCheck/custom.css">
+    <link rel="stylesheet" type="text/css" href="__CSS__/plugins/summernote/summernote.css">
+    <link rel="stylesheet" type="text/css" href="__CSS__/plugins/summernote/summernote-bs3.css">
+    <style>
+        .note-alarm {
+            float: right;
+            margin-top: 10px;
+            margin-right: 10px;
+        }
+    </style>
+</block>
+<block name="script">
+    <script src="__JS__/plugins/webuploader/webuploader.min.js"></script>
+    <script src="__JS__/plugins/prettyfile/bootstrap-prettyfile.js"></script>
+    <script src="__JS__/plugins/switchery/switchery.js"></script>
+    <script src="__JS__/plugins/iCheck/icheck.min.js"></script>
+    <script src="__JS__/plugins/summernote/summernote.min.js"></script>
+    <script src="__JS__/plugins/summernote/summernote-zh-CN.js"></script>
+    <script src="__JS__/ajaxfileupload.js"></script>
+    <script type="text/javascript">
+        $(function () {
+
+
+            $(".summernote").summernote({
+                height: 800,
+                lang:"zh-CN",
+                onImageUpload: function(files, editor, welEditable) {
+                    sendFile(files[0], editor, welEditable);
+                }
+            });
+
+
+            $("#save").click(function(){
+                $("#remark").val($(".summernote").code());
+                alert($(".summernote").code());
+                $.post("{:U('Goods/One')}", $("form").serialize(), function(data){
+                    if(!data.status){
+                        swal({title:"发生了什么？",text:data.info,type:"error"});
+                        return;
+                    }else{
+                        swal({title:"太帅了",text:data.info,type:"success"});
+                        return;
+                    }
+                },'json');
+            });
+        });
+        function itemAdd(){
+            var date=Date.parse(new Date());
+            /**/
+            $("#item").find(".file").attr("id","item_photo_input"+date);
+            $("#item").find(".hidden").attr("id","item_photo"+date);
+
+            var html=$("#item").html();
+            //$("#item").find('#item_photo_input'+date).remove();
+             $("#item-list").append(html);
+            $( '#item_photo_input'+date ).prettyFile({
+
+                text: "上传产品图片"
+            });
+            $( '#item_photo_input'+date ).change(function(){
+                var id=$(this).attr('id');
+                var name=$(this).attr('name');
+                var hiddeninput=$("#item_photo"+date);
+                alert(hiddeninput.attr("id"));
+                $.ajaxFileUpload({
+                    url: "{:U('Goods/uploadOne')}", //用于文件上传的服务器端请求地址
+                    secureuri: false, //是否需要安全协议，一般设置为false
+                    fileElementId: id, //文件上传域的ID
+                    dataType: 'json', //返回值类型 一般设置为json
+                    data:{'fileElementId':name},
+                    success: function (data, status)  //服务器成功响应处理函数
+                    {
+                        //$("#img1").attr("src", data.imgurl);
+                        if(!status){
+                            alert(data.msg);
+                        }
+                        else {
+                            //alert(hiddenname);
+                            alert(data.savename);
+                            hiddeninput.val(data.savepath+data.savename);
+                        }
+
+                    },
+                    error: function (data, status, e)//服务器响应失败处理函数
+                    {
+                        alert(e);
+                    }
+                });
+            });
+
+        }
+        function itemDel(e){
+            $(e).parents('li').remove();
+        }
+        function formAdd(){
+             var html=$("#form").html();
+             $("#form-list").append(html);
+        }
+        function formDel(e){
+            $(e).parents('li').remove();
+        }
+        function sendFile(file, editor, welEditable) {
+            data = new FormData();
+            data.append("file", file);
+            $.ajax({
+                data: data,
+                type: "POST",
+                url: "{:U('Goods/uploadEditer')}",
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function(data,status) {
+                    //$(".summernote").summernote("insertText","<p></p>");
+                    alert(status);
+                    if(status){
+                        editor.insertImage(welEditable, "__ROOT__"+"/Uploads/"+data.savepath+data.savename);
+                    }
+                    else{
+                        alert(data.msg);
+                    }
+
+                }
+            });
+        }
+    </script>
+</block>
+<block name="body">
+    <div class="row wrapper wrapper-content fadeInRight">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>{$currentpos}</h5>
+
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" id="refresh">
+                            <i class="fa fa-refresh"></i>
+                        </a>
+
+
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <form method="post" enctype="multipart/form-data" onsubmit="return false;" class="form-horizontal" name="{$Think.CONTROLLER_NAME}_{$Think.MODULE_NAME}_{$Think.ACTION_NAME}_form">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">商品编号</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" name="sn" id="sn" class="form-control" value="{:readSettings('title')}">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">名称</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" name="title" id="title" class="form-control" value="{:readSettings('title')}">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">原价</label>
+
+                            <div class="col-sm-10">
+                                <div class="input-group m-b"><span class="input-group-addon">&yen;</span>
+                                    <input type="text" class="form-control" name="original_price" value="{:readSettings('original_price')}"> <span class="input-group-addon">元</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">现价</label>
+
+                            <div class="col-sm-10">
+                                <div class="input-group m-b"><span class="input-group-addon">&yen;</span>
+                                    <input type="text" class="form-control" name="price" value="{:readSettings('price')}"> <span class="input-group-addon">元</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" >价格套餐</label>
+
+                            <div class="col-sm-1">
+                                <button type="button" onclick="itemAdd();" class="btn btn-primary">添加套餐</button>
+
+                            </div>
+                            <div class="col-sm-1">
+                                <select class="form-control m-b" name="item-type" id="type">
+                                    <option value="1">单选</option>
+                                    <option value="2">下拉</option>
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label"></label>
+                            <div class="col-sm-10">
+                                <ul class="list-group" id="item-list">
+
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" >扩展套餐</label>
+
+                            <div class="col-sm-1">
+                                <button type="button" onclick="formAdd();" class="btn btn-primary">添加套餐</button>
+
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label"></label>
+                            <div class="col-sm-10">
+                                <ul class="list-group" id="form-list">
+
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">售出数量</label>
+
+                            <div class="col-sm-10">
+                                <div class="input-group m-b">
+                                    <input type="text" class="form-control"  name="safe_ip_limit" value="{:readSettings('safe_ip_limit')}"> <span class="input-group-addon">笔</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">内容</label>
+
+                            <div class="col-sm-10">
+                                <div class="input-group m-b">
+                                    <div id="summernote" class="summernote" ></div>
+                                    <input name="remark" id="remark" type="hidden">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">附加内容：</label>
+
+                            <div class="col-sm-10">
+                                <textarea class="form-control" id="footer" name="footer" rows="3">{:readSettings('footer')}</textarea>
+                                <span class="help-block m-b-none">附加内容可以添加JS/CSS</span>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <button class="btn btn-primary" id="save" type="submit">保存内容</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="item" style="display: none;" >
+        <li class="list-group-item col-sm-10"  style="float: left;">
+            <div class="input-group m-b col-sm-2"  style="float: left">
+                <span class="input-group-addon">名称</span>
+                <input type="text" class="form-control" name="item_name[]" value="">
+            </div>
+            <div class="input-group m-b col-sm-2"  style="float: left">
+                <span class="input-group-addon">价格</span>
+                <input type="text" class="form-control" name="item_price[]" value="">
+                <span class="input-group-addon">元</span>
+            </div>
+            <div   style="float: left">
+                <input type="file"  name="item_photo_input"  data-name="item_photo"  class="form-control file">
+                <input type="hidden" name="item_photo[]" id="item_photo" class="hidden">
+            </div>
+            <div   style="float: left">
+                <button type="button" class="btn btn-danger" onclick="itemDel(this);">删除</button>
+            </div>
+
+        </li>
+    </div>
+    <div id="form" style="display: none;" >
+        <li class="list-group-item col-sm-10"  style="float: left;">
+            <div class="input-group m-b col-sm-2"  style="float: left">
+                <span class="input-group-addon">名称</span>
+                <input type="text" class="form-control" name="form_name[]" value="">
+            </div>
+            <div   style="float: left">
+                <button type="button" class="btn btn-danger" onclick="formDel(this);">删除</button>
+            </div>
+
+        </li>
+    </div>
+
+</block>
