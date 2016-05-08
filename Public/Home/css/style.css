@@ -21,6 +21,9 @@ body{
     color: #fff;
     margin-bottom: 10px;
 }
+.navbar-default .navbar-nav  li  a {
+    color: #ffffff;
+}
 .order{
     margin-top: 5px;
 }
