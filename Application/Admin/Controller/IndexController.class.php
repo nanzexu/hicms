@@ -32,4 +32,9 @@ class IndexController extends CommonController {
         }
 
     }
+    public function Logout(){
+        session('userid',null); // 删除name
+        cookie('username',null);
+        $this->success('您已成功退出！', 'Index/login');
+    }
 }

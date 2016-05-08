@@ -1,0 +1,40 @@
+<extend name="Public/mainbase"/>
+<block name="linkcss">
+    <link href="__CSS__/plugins/jsTree/style.min.css" rel="stylesheet">
+    <link href="__CSS__/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <!--<link href="__CSS__/plugins/smartselect/smartselect.min.css" rel="stylesheet">-->
+</block>
+<block name="script"></block>
+<block name="body">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+
+                <div class="ibox-content">
+                    <form method="post" class="form-horizontal" id="{$Think.CONTROLLER_NAME}_{$Think.MODULE_NAME}_{$Think.ACTION_NAME}_form">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">快递</label>
+
+                            <div class="col-sm-10">
+                                <select class="form-control m-b pull-left" name="delivery_name" id="delivery_name">
+                                    <foreach name="delivery" item="vo" >
+                                        <option value="{$vo.delivery_code}">{$vo.delivery_name}</option>
+                                    </foreach>
+                                </select>
+                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 必填</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">运单号</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="delivery_no" id="delivery_no" />
+                                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 必填</span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</block>

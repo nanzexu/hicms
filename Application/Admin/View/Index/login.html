@@ -6,16 +6,15 @@
             toastr.options.timeOut =2000;
             toastr.options.progressBar=true;
             $("#bt_login").click(function(){
-                $.post('{:U('Index/login?dosubmit=1')}', $("form").serialize(), function(data){
+                $.post("{:U('Index/login?dosubmit=1')}", $("form").serialize(), function(data){
                     if(!data.status){
-                        toastr.error( data.info, "对不起！");
+                        swal({title:"发生了什么？",text:data.info,type:"error"});
                         return;
                     }else{
-                        toastr.success(data.info, "恭喜！");
-                        toastr.options.onHidden = function() {window.location.href = data.url; };
-                        return;
+                        window.location.href = data.url;
                     }
                 },'json');
+
 
             });
         });
@@ -54,7 +53,7 @@
         </div>
         <div class="signup-footer">
             <div class="pull-left">
-                &copy; 2015 All Rights Reserved. HiCMS
+                &copy; 2015 All Rights Reserved. 811046@qq.com
             </div>
         </div>
     </div>
