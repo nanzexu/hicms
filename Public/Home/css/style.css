@@ -38,6 +38,12 @@ body{
     border-width: 3px;
     border-color: red;
 }
-.region select{
-    width: 30%;
+
+@media (max-width: 480px){
+
+}
+@media (min-width: 481px){
+    .region select{
+        width: 30%;
+    }
 }

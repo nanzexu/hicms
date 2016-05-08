@@ -32,5 +32,6 @@ class CommonController extends Controller
             }
         }
         $this->assign("good",$this->good);
+        $this->assign("item_price",json_encode($this->good['item_price']));
     }
 }

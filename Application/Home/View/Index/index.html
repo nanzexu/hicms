@@ -8,16 +8,21 @@
     <link href="__CSS__/font-awesome.min.css?v=4.4.0" rel="stylesheet">
     <link href="__CSS__/animate.min.css" rel="stylesheet">
     <link href="__CSS__/jquery.spinner.css" rel="stylesheet">
+    <link href="__CSS__/sweetalert.css" rel="stylesheet">
+    <link href="__CSS__/bootstrapvalidator/bootstrapValidator.css" rel="stylesheet">
     <link href="__CSS__/style.css" rel="stylesheet">
 
 
     <script src="__JS__/jquery.min.js?v=2.1.4"></script>
     <script src="__JS__/jquery.spinner.js"></script>
+    <script src="__JS__/sweetalert.min.js"></script>
     <script src="__JS__/cityselect/jquery.cityselect.js"></script>
+    <script src="__JS__/bootstrapvalidator/bootstrapValidator.js"></script>
     <script src="__JS__/bootstrap.min.js?v=3.3.5"></script>
 
     <script type="text/javascript">
         $(function () {
+            var item_price={$item_price};
             $("img").addClass("img-responsive");
             $("img").addClass("center-block");
             $(".good_img>a").click(function(){
@@ -25,18 +30,27 @@
                 $(this).addClass("selected");
             });
             $('.spinner').spinner({
+                min:1,
                 value:1,
                 changed:function(e,oldValue,newValue){
+                    $("#price").html(newValue* parseFloat($("input[name$='item_price']").val()));
+                    $("input[name$='total_price']").val(newValue* parseFloat($("input[name$='item_price']").val()));
+                    $("input[name$='quantity']").val(newValue);
 
                 }
             });
             $(".btn-item-name").click(function(){
                 $(".btn-item-name").removeClass("btn-primary").addClass("btn-default");
                 $(this).removeClass("btn-default").addClass("btn-primary");
+                $("input[name$='item_name']").val($(this).attr('data-val'));
+                $("input[name$='item_price']").val(item_price[$(this).attr('data-key')]);
+                $("#price0").html(item_price[$(this).attr('data-key')]);
+                $("#price").html(item_price[$(this).attr('data-key')]);
             });
             $(".btn-form-name").click(function(){
                 $(".btn-form-name").removeClass("btn-primary").addClass("btn-default");
                 $(this).removeClass("btn-default").addClass("btn-primary");
+                $("input[name$='form_name']").val($(this).attr('data-val'));
             });
             $(".btn-pay").click(function(){
                 $(".btn-pay").removeClass("btn-primary").addClass("btn-default");
@@ -47,10 +61,27 @@
                 nodata:"none",
                 required:false
             });
-            $("#save").click(function(){
-                $.post("{:U('Index/Order')}", $("form").serialize(), function(data){
 
+
+            $("#save").click(function(){
+                //验证表单
+                /*$("form").bootstrapValidator('validate').on('success.form.bv',function(e){
+                    e.preventDefault();
+                    $.post("{:U('Index/Order')}", $("form").serialize(), function(data){
+
+                    },'json');
+                });*/
+                $.post("{:U('Index/Order')}", $("form").serialize(), function(data,status){
+                    if(data.status){
+                        $("input[name$='name']").val("");
+                        $("input[name$='phone']").val("");
+                        swal({title:"恭喜！",text:data.info,type:"success"});
+                    }
+                    else{
+                        swal({title:"您好像没填完您的信息？",text:data.info,type:"error"});
+                    }
                 },'json');
+
             });
         });
     </script>
@@ -90,8 +121,9 @@
                                 <div class=" btn-group col-sm-10  col-xs-8 " role="group" aria-label="...">
 
                                     <foreach name="good.item_name" item="vo" key="k" >
-                                        <button type="button" class="btn btn-default btn-item-name">{$vo}</button>
+                                        <button type="button" class="btn btn-default btn-item-name" data-key="{$k}" data-val="{$vo}">{$vo}</button>
                                     </foreach>
+                                    <input type="hidden" name="item_name" value="">
                                 </div>
 
                             </div>
@@ -102,29 +134,40 @@
                                 </label>
                                 <div class=" btn-group col-sm-10  col-xs-8" role="group2" aria-label="...">
                                     <foreach name="good.form_name" item="vo" key="k" >
-                                        <button type="button" class="btn btn-default btn-form-name">{$vo}</button>
+                                        <button type="button" class="btn btn-default btn-form-name" data-key="{$k}" data-val="{$vo}">{$vo}</button>
                                     </foreach>
+                                    <input type="hidden" name="form_name" value="">
                                 </div>
 
                             </div>
                             <br>
                             <div class="form-group">
                                 <label class="col-sm-2 col-xs-4 control-label" >
+                                    商品价格
+                                </label>
+                                <div class="col-sm-10  col-xs-8" style="color:red;"><strong><del>{$good['original_price']}元</del></strong>&nbsp;&nbsp;&nbsp;<strong id="price0">{$good['price']}</strong>元</div>
+
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 col-xs-4 control-label" >
                                     订单价格
                                 </label>
-                                <div class="col-sm-10  col-xs-8" style="color:red;"><strong>198.00元</strong></div>
+                                <div class="col-sm-10  col-xs-8" style="color:red;"><strong id="price">{$good['price']}</strong>元</div>
+                                <input type="hidden" name="item_price" value="{$good['price']}">
+                                <input  type="hidden" name="quantity" value="1"/>
+                                <input type="hidden" name="total_price" value="{$good['price']}">
                             </div>
                             <br>
                             <div class="form-group">
                                 <label class="col-sm-2 col-xs-4 control-label" >购买数量</label>
                                 <div class="col-sm-1  col-xs-8">
-                                    <input  type="text" class="spinner"/>
+                                    <input  type="text"  class="spinner"/>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 col-xs-4 control-label" >收货人</label>
                                 <div class="col-sm-4  col-xs-8">
-                                    <input type="text" class="form-control" id="exampleInputEmail1" placeholder="请输入收货人姓名" >
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="请输入收货人姓名" >
                                 </div>
                             </div>
 
@@ -136,32 +179,27 @@
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 col-xs-4 control-label " >地区</label>
-                                <div id="city" class="col-sm-8  col-xs-8  hidden-sm hidden-md hidden-lg">
-                                    <select class="form-control pull-left top prov">
-                                        <option>请选择省份...</option></select>
-                                    <select class="form-control pull-left top city">
-                                        <option>请选择城市...</option></select>
-                                    <select class="form-control pull-left top dist"> </select>
-                                </div>
-                                <div id="city" class="col-sm-8  col-xs-8 region hidden-xs">
-                                    <select class="form-control pull-left prov"></select>
-                                    <select class="form-control pull-left city" disabled="disabled"></select>
-                                    <select class="form-control pull-left dist" disabled="disabled"></select>
+
+                                <div id="city" class="col-sm-8  col-xs-8 region">
+                                    <select name="region[prov]" class="form-control pull-left prov"></select>
+                                    <select name="region[city]" class="form-control pull-left city" disabled="disabled"></select>
+                                    <select name="region[dist]" class="form-control pull-left dist" disabled="disabled"></select>
                                 </div>
 
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 col-xs-4 control-label" >详细地址</label>
                                 <div class="col-sm-10  col-xs-8">
-                                    <input type="text" class="form-control" id="address" placeholder="请输入详细地址" >
+                                    <input type="text" class="form-control" name="address" id="address" placeholder="请输入详细地址" >
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 col-xs-4 control-label" >支付方式</label>
                                 <div class="btn-group col-sm-10  col-xs-8" role="group" aria-label="...">
-                                    <button type="button" class="btn btn-default btn-pay">货到付款</button>
-                                    <button type="button" class="btn btn-default btn-pay">微信支付</button>
+                                    <button type="button" class="btn btn-primary btn-pay" data-val="1">货到付款</button>
+                                    <!--<button type="button" class="btn btn-default btn-pay" data-val="2">微信支付</button>-->
                                 </div>
+                                <input name="payment" type="hidden" value="1">
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-12  col-xs-12">
