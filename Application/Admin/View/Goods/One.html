@@ -192,13 +192,18 @@
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label" >价格套餐</label>
-
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control pull-left" name="item_title" placeholder="请输入套餐标题..." value="{$good['itemt_title']}">
+                            </div>
                             <div class="col-sm-1">
+
                                 <button type="button" onclick="itemAdd();" class="btn btn-primary">添加套餐</button>
 
                             </div>
+
                             <div class="col-sm-1">
-                                <select class="form-control m-b" name="item-type" id="type">
+
+                                <select class="form-control m-b pull-left" name="item-type" id="type">
                                     <option value="1">单选</option>
                                     <option value="2">下拉</option>
                                 </select>
@@ -274,7 +279,9 @@
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label" >扩展套餐</label>
-
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control pull-left" name="form_title" placeholder="请输入扩展套餐标题..." value="{$good['itemt_title']}">
+                            </div>
                             <div class="col-sm-1">
                                 <button type="button" onclick="formAdd();" class="btn btn-primary">添加套餐</button>
 

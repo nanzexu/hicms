@@ -13,6 +13,7 @@
 
     <script src="__JS__/jquery.min.js?v=2.1.4"></script>
     <script src="__JS__/jquery.spinner.js"></script>
+    <script src="__JS__/cityselect/jquery.cityselect.js"></script>
     <script src="__JS__/bootstrap.min.js?v=3.3.5"></script>
 
     <script type="text/javascript">
@@ -40,6 +41,16 @@
             $(".btn-pay").click(function(){
                 $(".btn-pay").removeClass("btn-primary").addClass("btn-default");
                 $(this).removeClass("btn-default").addClass("btn-primary");
+            });
+            $("#city").citySelect({
+                url:"__JS__/cityselect/city.min.js",
+                nodata:"none",
+                required:false
+            });
+            $("#save").click(function(){
+                $.post("{:U('Index/Order')}", $("form").serialize(), function(data){
+
+                },'json');
             });
         });
     </script>
@@ -71,10 +82,10 @@
                         <h3 class="panel-title"><i class="glyphicon glyphicon-shopping-cart"></i><span>{$good['title']}</span></h3>
                     </div>
                     <div class="panel-body">
-                        <form method="post" enctype="multipart/form-data" onsubmit="return false;" class="form-horizontal" name="{$Think.CONTROLLER_NAME}_{$Think.MODULE_NAME}_{$Think.ACTION_NAME}_form">
+                        <form method="post"  onsubmit="return false;" class="form-horizontal" name="{$Think.CONTROLLER_NAME}_{$Think.MODULE_NAME}_{$Think.ACTION_NAME}_form">
                             <div class="form-group" >
                                 <label class="col-sm-2 col-xs-4 control-label" >
-                                    选择套餐
+                                    {$good['item_title']}
                                 </label>
                                 <div class=" btn-group col-sm-10  col-xs-8 " role="group" aria-label="...">
 
@@ -87,6 +98,7 @@
                             <br>
                             <div class="form-group" >
                                 <label class="col-sm-2 col-xs-4 control-label" >
+                                    {$good['form_title']}
                                 </label>
                                 <div class=" btn-group col-sm-10  col-xs-8" role="group2" aria-label="...">
                                     <foreach name="good.form_name" item="vo" key="k" >
@@ -104,7 +116,7 @@
                             </div>
                             <br>
                             <div class="form-group">
-                                <label class="col-sm-2 col-xs-4 control-label" >价格套餐</label>
+                                <label class="col-sm-2 col-xs-4 control-label" >购买数量</label>
                                 <div class="col-sm-1  col-xs-8">
                                     <input  type="text" class="spinner"/>
                                 </div>
@@ -119,56 +131,22 @@
                             <div class="form-group">
                                 <label class="col-sm-2 col-xs-4 control-label" >手机号码</label>
                                 <div class="col-sm-4  col-xs-8">
-                                    <input type="text" class="form-control" id="phone" placeholder="请输入手机号码" >
+                                    <input type="text" name="phone" class="form-control" id="phone" placeholder="请输入手机号码" >
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 col-xs-4 control-label " >地区</label>
-                                <div class="col-sm-8  col-xs-8  hidden-sm hidden-md hidden-lg">
-                                    <select class="form-control pull-left top">
-                                        <option>请选择省份...</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                        <option>5</option>
-                                    </select>
-                                    <select class="form-control pull-left top">
-                                        <option>请选择城市...</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                        <option>5</option>
-                                    </select>
-                                    <select class="form-control pull-left top">
-                                        <option>请选择县区...</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                        <option>5</option>
-                                    </select>
+                                <div id="city" class="col-sm-8  col-xs-8  hidden-sm hidden-md hidden-lg">
+                                    <select class="form-control pull-left top prov">
+                                        <option>请选择省份...</option></select>
+                                    <select class="form-control pull-left top city">
+                                        <option>请选择城市...</option></select>
+                                    <select class="form-control pull-left top dist"> </select>
                                 </div>
-                                <div class="col-sm-8  col-xs-8 region hidden-xs">
-                                    <select class="form-control pull-left">
-                                        <option>请选择省份...</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                        <option>5</option>
-                                    </select>
-                                    <select class="form-control pull-left">
-                                        <option>请选择城市...</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                        <option>5</option>
-                                    </select>
-                                    <select class="form-control pull-left">
-                                        <option>请选择县区...</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                        <option>5</option>
-                                    </select>
+                                <div id="city" class="col-sm-8  col-xs-8 region hidden-xs">
+                                    <select class="form-control pull-left prov"></select>
+                                    <select class="form-control pull-left city" disabled="disabled"></select>
+                                    <select class="form-control pull-left dist" disabled="disabled"></select>
                                 </div>
 
                             </div>
@@ -187,7 +165,7 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-12  col-xs-12">
-                                    <button type="button" class="btn btn-success  btn-lg btn-block ">确认提交</button>
+                                    <button type="button" id="save" class="btn btn-success  btn-lg btn-block ">确认提交</button>
                                 </div>
 
                             </div>
