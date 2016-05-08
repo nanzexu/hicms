@@ -14,7 +14,10 @@ class CommonController extends Controller
     function _initialize(){
         //读取系统设置
         $setting_db = M('Setting');
-        $this->settings=$setting_db->select();
+        $settings=$setting_db->select();
+        foreach($settings as $key=>$value){
+            $this->settings[$value['name']]=$value['value'];
+        }
         $this->assign('settings',$this->settings);
 
         //读取产品信息
