@@ -1,0 +1,43 @@
+<extend name="Public/base"/>
+<block name="script"></block>
+<block name="body">
+    <div class="container" style="background-color: rgba(255, 255, 255, .2);min-height: 750px;">
+        <div class="row">
+            <div class="col-sm-12 col-xs-12 header">
+                <h4 class="text-center">
+                    我的历史订单
+                </h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-xs-12">
+                <div class="list-group order-list">
+                    <foreach name="list" item="vo" key="k" >
+                    <a href="#" class="list-group-item">
+                        <h4 class="list-group-item-heading">{$good['title']}</h4>
+                        <p class="list-group-item-text">{$good['item_title']}:[{$vo['item_name']}]</p>
+                        <notempty  name="good.form_title">
+                        <p class="list-group-item-text">{$good['form_title']}:[{$vo['form_name']}]</p>
+                        </notempty >
+                        <p class="list-group-item-text">收货人：{$vo['name']}/联系电话：{$vo['phone']} </p>
+                        <p class="list-group-item-text">收货地址：{$vo['address']} </p>
+                        <p class="list-group-item-text">下单日期：{$vo['datetime']} </p>
+                        <p class="list-group-item-text">状态：
+                            <if condition="$vo['is_sent'] ==1 "><span class="label label-success">已发货</span>
+                                <else /> <span class="label label-warning">未发货</span>
+                            </if>
+                            <if condition="$vo['is_delete'] ==1 ">
+                                <span class="label label-danger">已关闭</span>
+                            </if>
+                        </p>
+                        <if condition="$vo['is_sent'] ==1 ">
+                            <p class="list-group-item-text">快递信息：{:getDeliveryName($vo['delivery_name'])}/{$vo['delivery_no']} </p>
+                        </if>
+
+                    </a>
+                    </foreach>
+                </div>
+            </div>
+        </div>
+    </div>
+</block>

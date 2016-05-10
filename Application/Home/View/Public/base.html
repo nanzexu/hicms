@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{$settings['title']}</title>
+    <meta name="description" content="{$settings['description']}">
+    <meta name="keywords" content=" {$settings['keywords']}">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="__CSS__/bootstrap.min.css?v=3.3.5" rel="stylesheet">
+    <link href="__CSS__/font-awesome.min.css?v=4.4.0" rel="stylesheet">
+    <link href="__CSS__/animate.min.css" rel="stylesheet">
+    <link href="__CSS__/jquery.spinner.css" rel="stylesheet">
+    <link href="__CSS__/sweetalert.css" rel="stylesheet">
+    <link href="__CSS__/bootstrapvalidator/bootstrapValidator.css" rel="stylesheet">
+    <link href="__CSS__/style.css" rel="stylesheet">
+    <block name="linkcss"></block>
+
+    <script src="__JS__/jquery.min.js?v=2.1.4"></script>
+    <script src="__JS__/jquery.spinner.js"></script>
+    <script src="__JS__/sweetalert.min.js"></script>
+    <script src="__JS__/cityselect/jquery.cityselect.js"></script>
+    <script src="__JS__/bootstrapvalidator/bootstrapValidator.js"></script>
+    <script src="__JS__/bootstrap.min.js?v=3.3.5"></script>
+    <block name="script">
+
+    </block>
+
+
+</head>
+<body>
+<div class="container-fluid">
+    <nav class="navbar navbar-default navbar-fixed-bottom" style="background-color: #337ab7;border: 0px;">
+        <div class="navbar-inner navbar-content-center">
+            <!--<p class="text-center credit" style="padding: 10px;">
+                ....
+            </p>-->
+            <ul class="nav navbar-nav col-sm-12 col-xs-12">
+                <li class="col-sm-6 col-xs-6" >
+                    <a href="#order-box" class="pull-right"><i class="glyphicon glyphicon-shopping-cart"></i>立刻购买</a>
+                </li>
+                <li class="col-sm-6 col-xs-6" >
+                    <a href="#" class="pull-left" data-toggle="modal" data-target="#myModal"><i class="glyphicon glyphicon-list"></i>我的订单</a>
+                </li>
+            </ul>
+
+        </div>
+    </nav>
+    <block name="body"></block>
+</div>
+</body>
+</html>

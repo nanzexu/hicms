@@ -1,28 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <title>{$settings['title']}</title>
-    <meta name="description" content="{$settings['description']}">
-    <meta name="keywords" content=" {$settings['keywords']}">
-    <link rel="shortcut icon" href="favicon.ico"> <link href="__CSS__/bootstrap.min.css?v=3.3.5" rel="stylesheet">
-    <link href="__CSS__/font-awesome.min.css?v=4.4.0" rel="stylesheet">
-    <link href="__CSS__/animate.min.css" rel="stylesheet">
-    <link href="__CSS__/jquery.spinner.css" rel="stylesheet">
-    <link href="__CSS__/sweetalert.css" rel="stylesheet">
-    <link href="__CSS__/bootstrapvalidator/bootstrapValidator.css" rel="stylesheet">
-    <link href="__CSS__/style.css" rel="stylesheet">
-
-
-    <script src="__JS__/jquery.min.js?v=2.1.4"></script>
-    <script src="__JS__/jquery.spinner.js"></script>
-    <script src="__JS__/sweetalert.min.js"></script>
-    <script src="__JS__/cityselect/jquery.cityselect.js"></script>
-    <script src="__JS__/bootstrapvalidator/bootstrapValidator.js"></script>
-    <script src="__JS__/bootstrap.min.js?v=3.3.5"></script>
-
+<extend name="Public/base"/>
+<block name="script">
     <script type="text/javascript">
         $(function () {
             var item_price={$item_price};
@@ -69,12 +46,12 @@
             $("#save").click(function(){
                 //验证表单
                 /*$("form").bootstrapValidator('validate').on('success.form.bv',function(e){
-                    e.preventDefault();
-                    $.post("{:U('Index/Order')}", $("form").serialize(), function(data){
+                 e.preventDefault();
+                 $.post("{:U('Index/Order')}", $("form").serialize(), function(data){
 
-                    },'json');
-                });*/
-                $.post("{:U('Index/Order')}", $("form").serialize(), function(data,status){
+                 },'json');
+                 });*/
+                $.post("{:U('Index/Order')}", $("#form1").serialize(), function(data,status){
                     if(data.status){
                         $("input[name$='name']").val("");
                         $("input[name$='phone']").val("");
@@ -86,29 +63,15 @@
                 },'json');
 
             });
+
+            $("#order_search").click(function(){
+                alert("fffff");
+                $("#form2").submit();
+            });
         });
     </script>
-
-</head>
-<body>
-
-<div class="container-fluid">
-    <nav class="navbar navbar-default navbar-fixed-bottom" style="background-color: #337ab7;border: 0px;">
-        <div class="navbar-inner navbar-content-center">
-            <!--<p class="text-center credit" style="padding: 10px;">
-                ....
-            </p>-->
-            <ul class="nav navbar-nav col-sm-12 col-xs-12">
-                <li class="col-sm-6 col-xs-6" >
-                    <a href="#order-box" class="pull-right"><i class="glyphicon glyphicon-shopping-cart"></i>立刻购买</a>
-                </li>
-                <li class="col-sm-6 col-xs-6" >
-                    <a href="#" class="pull-left" data-toggle="modal" data-target="#myModal"><i class="glyphicon glyphicon-list"></i>我的订单</a>
-                </li>
-            </ul>
-
-        </div>
-    </nav>
+</block>
+<block name="body">
     <div class="container" style="background-color: rgba(255, 255, 255, .2);">
         <div class="row">
             <div class="col-sm-12 col-xs-12 header">
@@ -133,7 +96,7 @@
                         <h3 class="panel-title"><i class="glyphicon glyphicon-shopping-cart"></i><span>{$good['title']}</span></h3>
                     </div>
                     <div class="panel-body">
-                        <form method="post"  onsubmit="return false;" class="form-horizontal" name="{$Think.CONTROLLER_NAME}_{$Think.MODULE_NAME}_{$Think.ACTION_NAME}_form">
+                        <form method="post" id="form1"  onsubmit="return false;" class="form-horizontal" name="{$Think.CONTROLLER_NAME}_{$Think.MODULE_NAME}_{$Think.ACTION_NAME}_form">
                             <div class="form-group" >
                                 <label class="col-sm-2 col-xs-4 control-label" >
                                     {$good['item_title']}
@@ -235,41 +198,37 @@
 
         </div>
     </div>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">查询订单</h4>
+                </div>
+                <div class="modal-body">
+                    <form action="{:U('index/Myorder')}" method="post" id="form2" enctype="multipart/form-data"  class="form-horizontal" name="order_form">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">收货人姓名</label>
 
-</div>
-<!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">查询订单</h4>
-            </div>
-            <div class="modal-body">
-                <form method="post" enctype="multipart/form-data" onsubmit="return false;" class="form-horizontal" name="order_form">
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label">收货人姓名</label>
-
-                        <div class="col-sm-6">
-                            <input type="text" name="sn" id="order_name" class="form-control" value="" placeholder="请输入收货人姓名">
+                            <div class="col-sm-6">
+                                <input type="text" name="name" id="order_name" class="form-control" value="" placeholder="请输入收货人姓名">
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label">收货人手机</label>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">收货人手机</label>
 
-                        <div class="col-sm-6">
-                            <input type="text" name="phone" id="order_phone" class="form-control" value="" placeholder="请输入收货人手机">
+                            <div class="col-sm-6">
+                                <input type="text" name="phone" id="order_phone" class="form-control" value="" placeholder="请输入收货人手机">
+                            </div>
                         </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary">查询</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id="order_search">查询</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-</body>
-
-</html>
+</block>

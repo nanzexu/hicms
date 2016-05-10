@@ -42,4 +42,13 @@ class IndexController extends CommonController {
             }
         }
     }
+    public function Myorder(){
+        if(IS_POST){
+            $order_db=D("Order");
+            $data=I('post.');
+            $order_list=$order_db->where($data)->select();
+            $this->assign('list',$order_list);
+            $this->display();
+        }
+    }
 }
