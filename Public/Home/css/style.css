@@ -41,7 +41,13 @@ body{
     border-width: 3px;
     border-color: red;
 }
-
+.navbar{
+    min-height: 30px;
+}
+.navbar-nav li a{
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
 @media (max-width: 480px){
 
 }
