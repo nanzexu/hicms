@@ -1,0 +1,316 @@
+<extend name="Public/mainbase"/>
+<block name="linkcss">
+    <link href="__CSS__/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    <link href="__CSS__/plugins/datapicker/datepicker3.css" rel="stylesheet">
+</block>
+<block name="script">
+    <script src="__JS__/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+    <script src="__JS__/plugins/bootstrap-table/bootstrap-table-mobile.min.js"></script>
+    <script src="__JS__/plugins/bootstrap-table/bootstrap-table-toolbar.js"></script>
+    <script src="__JS__/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+    <script src="__JS__/plugins/datapicker/bootstrap-datepicker.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("#addBtn").click(function(){
+                $.post("{:U('Channel/Add')}",$("#addForm").serialize(),function(data,status){
+                    if(data.status){
+                        swal({title:"恭喜！",text:data.info,type:"success"});
+                    }
+                    else{
+                        swal({title:"发生错了！",text:data.info,type:"error"});
+                    }
+                });
+                $("#grid").bootstrapTable("refresh");
+                $('#addModal').modal('hide');
+            });
+            $("#editBtn").click(function(){
+                $.post("{:U('Channel/edit')}",$("#editForm").serialize(),function(data,status){
+                    if(data.status){
+                        swal({title:"恭喜！",text:data.info,type:"success"});
+                    }
+                    else{
+                        swal({title:"发生错了！",text:data.info,type:"error"});
+                    }
+                });
+                $("#grid").bootstrapTable("refresh");
+                $('#editModal').modal('hide');
+            });
+
+            $("#grid").bootstrapTable({
+                method: 'post',
+                url: "{:U('Channel/index')}",
+
+                //search:"true",
+                //advancedSearch:"true",
+                //idTable:"advancedTable",
+                //queryParams:queryParams,
+                toolbar: "#toolbar",
+                toolbarAlign: "left",
+                showRefresh: true,
+                showColumns: true,
+                //分页
+                sidePagination: "server",
+                contentType: "application/x-www-form-urlencoded",
+                pagination: true,
+                pageSize: 20,
+                columns: [
+
+                    {title: '名称', field: 'title', width: '40%'},
+                    {title: '标示名称', field: 'name', width: '40%'},
+                    { field: 'operate', width: '10%',title: '操作',align: 'center',events: operateEvents,formatter: operateFormatter}
+
+                ]
+            });
+
+        });
+        window.operateEvents = {
+            'click .url':function(e, value, row, index){
+                $("#url").val("{$url}"+row.title);
+                $("#urlModal").modal('show');
+            },
+            'click .edit':function (e, value, row, index) {
+                //alert('You click like action, row: ' + JSON.stringify(row));
+                $("#edit_name").val(row.name);
+                $("#edit_title").val(row.title);
+                $("#edit_id").val(row.id);
+                $("#edit_script").val(HtmlUtil.htmlDecode(row.script));
+                $("#editModal").modal('show');
+            },
+            'click .remove':function(e, value, row, index){
+                //alert('You click like action, row: ' + JSON.stringify(row));
+                var url = "{:U('Channel/remove')}";
+                url += url.indexOf('?') != -1 ? '&id=' + row.id : '?id=' + row.id;
+                swal({
+                    title: "您确定要删除该渠道吗",
+                    text: "删除后将无法恢复，请谨慎操作！",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "删除",
+                    closeOnConfirm: false
+                },function () {
+                    $.post(url, function(data){
+                        if (data.status) {
+                            reload();
+                            swal("删除成功！", "您已经成功删除该渠道。", "success");
+                        }
+                        else {
+                            swal("删除失败！", data.info, "error");
+                        }
+                    });
+                });
+            }
+        }
+        function operateFormatter(value, row, index) {
+
+            return [
+                '<div class="btn-group">',
+                '<button type="button" class="btn btn-success btn-xs edit">编辑</button>',
+                '<button type="button" class="btn btn-danger btn-xs  remove">删除</button>',
+                '<button type="button" class="btn btn-info btn-xs  url">推广地址</button>',
+                '</div>',
+
+
+            ].join('');
+        }
+        function reload(){
+            $("#grid").bootstrapTable('refresh');
+        }
+        var HtmlUtil = {
+            /*1.用浏览器内部转换器实现html转码*/
+            htmlEncode:function (html){
+                //1.首先动态创建一个容器标签元素，如DIV
+                var temp = document.createElement ("div");
+                //2.然后将要转换的字符串设置为这个元素的innerText(ie支持)或者textContent(火狐，google支持)
+                (temp.textContent != undefined ) ? (temp.textContent = html) : (temp.innerText = html);
+                //3.最后返回这个元素的innerHTML，即得到经过HTML编码转换的字符串了
+                var output = temp.innerHTML;
+                temp = null;
+                return output;
+            },
+            /*2.用浏览器内部转换器实现html解码*/
+            htmlDecode:function (text){
+                //1.首先动态创建一个容器标签元素，如DIV
+                var temp = document.createElement("div");
+                //2.然后将要转换的字符串设置为这个元素的innerHTML(ie，火狐，google都支持)
+                temp.innerHTML = text;
+                //3.最后返回这个元素的innerText(ie支持)或者textContent(火狐，google支持)，即得到经过HTML解码的字符串了。
+                var output = temp.innerText || temp.textContent;
+                temp = null;
+                return output;
+            }
+        };
+    </script>
+
+</block>
+<block name="body">
+    <div class="row wrapper wrapper-content fadeInRight">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>{$currentpos}</h5>
+
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" id="refresh">
+                            <i class="fa fa-refresh"></i>
+                        </a>
+
+
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div id="toolbar">
+                        <button class="btn btn-primary " id="btnAdd" type="button" data-toggle="modal"
+                                data-target="#addModal"><i class="fa fa-add"></i>&nbsp;添加
+                        </button>
+                    </div>
+                    <table id="grid"></table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- 模态框（Modal） -->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close"
+                            data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="editModalLabel">
+                        编辑渠道
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm" class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">名称：</label>
+
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control input-md" name="title" id="edit_title"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">标示名称：</label>
+
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control input-md" name="name" id="edit_name"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">统计代码：</label>
+
+                            <div class="col-sm-6">
+                                <textarea class="form-control" id="edit_script" name="script" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <input type="hidden" name="id" id="edit_id" />
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">关闭
+                    </button>
+                    <button type="button" id="editBtn" class="btn btn-primary">
+                        提交
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close"
+                            data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        添加新渠道
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form id="addForm" class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">名称：</label>
+
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control input-md" name="title" id="title"
+                                       />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">标示名称：</label>
+
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control input-md" name="name"
+                                       />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">统计代码：</label>
+
+                            <div class="col-sm-6">
+                                <textarea class="form-control" id="script" name="script" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">关闭
+                    </button>
+                    <button type="button" id="addBtn" class="btn btn-primary">
+                        提交
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+    <div class="modal fade" id="urlModal" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close"
+                            data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="urlModalLabel">
+                        渠道推广地址
+                    </h4>
+                </div>
+                <div class="modal-body">
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">推广地址：</label>
+
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control input-md" name="url" id="url"
+                                />
+                            </div>
+                        </div>
+
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">关闭
+                    </button>
+
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+</block>
