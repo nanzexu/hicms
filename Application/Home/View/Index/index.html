@@ -182,6 +182,13 @@
                                     <!--<button type="button" class="btn btn-default btn-pay" data-val="2">微信支付</button>-->
                                 </div>
                                 <input name="payment" type="hidden" value="1">
+
+                                <notempty name="channel">
+                                    <!------{$channel['name']}渠道----------------->
+                                    <input name="channel" type="hidden" value="{$channel['name']}">
+                                    <!------{$channel['name']}渠道----------------->
+                                </notempty>
+
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-12  col-xs-12">
