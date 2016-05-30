@@ -52,6 +52,15 @@ body{
     padding-top: 5px;
     padding-bottom: 5px;
 }
+.form-group label{
+    margin-bottom: 10px;
+}
+.dropdown-menu li {
+    background-color: rgb(51, 122, 183);
+}
+.dropdown-menu li a:hover{
+    color: #0a6aa1;
+}
 @media (max-width: 480px){
 
 }

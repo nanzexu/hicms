@@ -92,10 +92,10 @@
 		<hr/>
 		<div class="row">
 		   <div class="col-sm-12 col-xs-12 text-center" >
-		       <h3 style="margin:0px;">{:rand(10000,20000);}人已购买</h3>
+		       <h3 style="margin:0px;color:red;font-weight:900;">{:rand(10000,20000);}人已购买</h3>
 		   </div>
-		   <div class="form-group style="margin-top:10px;"">
-                                <div class="col-sm-12  col-xs-12">
+		   <div class="form-group">
+                                <div class="col-sm-12  col-xs-12"  style="margin-top:10px; margin-bottom: 10px;">
                                     <a href="#order-box" class="btn btn-success  btn-lg btn-block ">马上购买</a>
                                 </div>
 
@@ -237,16 +237,16 @@
                 <div class="modal-body">
                     <form action="{:U('index/Myorder')}" method="post" id="form2" enctype="multipart/form-data"  class="form-horizontal" name="order_form">
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">收货人姓名</label>
+                            <label class="col-sm-4 col-xs12 control-label">收货人姓名</label>
 
-                            <div class="col-sm-6">
+                            <div class="col-sm-6  col-xs12 ">
                                 <input type="text" name="name" id="order_name" class="form-control" value="" placeholder="请输入收货人姓名">
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">收货人手机</label>
+                        <div class="form-group ">
+                            <label class="col-sm-4   col-xs12  control-label">收货人手机</label>
 
-                            <div class="col-sm-6">
+                            <div class="col-sm-6  col-xs12 ">
                                 <input type="text" name="phone" id="order_phone" class="form-control" value="" placeholder="请输入收货人手机">
                             </div>
                         </div>
