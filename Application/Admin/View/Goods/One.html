@@ -32,8 +32,9 @@
                     sendFile(files[0], editor, welEditable);
                 }
             });
+
             $(".summernote").code('{$good["remark"]}');
-            //$(".summernote").summernote("insertHtml",'{$good["remark"]}');
+
 
 
             $("#save").click(function(){
@@ -193,7 +194,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label" >价格套餐</label>
                             <div class="col-sm-2">
-                                <input type="text" class="form-control pull-left" name="item_title" placeholder="请输入套餐标题..." value="{$good['itemt_title']}">
+                                <input type="text" class="form-control pull-left" name="item_title" placeholder="请输入套餐标题..." value="{$good['item_title']}">
                             </div>
                             <div class="col-sm-1">
 
@@ -280,7 +281,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label" >扩展套餐</label>
                             <div class="col-sm-2">
-                                <input type="text" class="form-control pull-left" name="form_title" placeholder="请输入扩展套餐标题..." value="{$good['itemt_title']}">
+                                <input type="text" class="form-control pull-left" name="form_title" placeholder="请输入扩展套餐标题..." value="{$good['form_title']}">
                             </div>
                             <div class="col-sm-1">
                                 <button type="button" onclick="formAdd();" class="btn btn-primary">添加套餐</button>

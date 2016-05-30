@@ -23,6 +23,7 @@ class CommonController extends Controller {
         //读取产品信息
         $goodone_db=D("Goodone");
         $goodinfo=$goodone_db->select();
+
         foreach($goodinfo as $key=>$value){
             if($value['name']=="item_name" or $value['name']=="item_price" or $value['name']=="item_photo" or $value['name']=="form_name"){
                 $good[$value['name']]=json_decode($value['value']);
@@ -34,6 +35,10 @@ class CommonController extends Controller {
                 $good[$value['name']]=$value['value'];
             }
         }
+        $good['remark']=str_replace(array("/r/n", "/r", "/n"), "", $good['remark']);
+        $good['remark'] = str_replace(PHP_EOL, '',  $good['remark']);
+        $good['remark'] = addslashes($good['remark']);
+        //echo addslashes($good['remark']);die();
         $this->assign("good",$good);
 
 
