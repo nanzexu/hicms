@@ -34,8 +34,38 @@
             });
 
             $(".summernote").code('{$good["remark"]}');
+            $( '#photo').prettyFile({
 
+                text: "上传产品图片"
+            });
+            $( '#photo').change(function(){
+                var id=$(this).attr('id');
+                var name=$(this).attr('name');
+                $.ajaxFileUpload({
+                    url: "{:U('Goods/uploadOne')}", //用于文件上传的服务器端请求地址
+                    secureuri: false, //是否需要安全协议，一般设置为false
+                    fileElementId: id, //文件上传域的ID
+                    dataType: 'json', //返回值类型 一般设置为json
+                    data:{'fileElementId':name},
+                    success: function (data, status)  //服务器成功响应处理函数
+                    {
+                        //$("#img1").attr("src", data.imgurl);
+                        if(!status){
+                            alert(data.msg);
+                        }
+                        else {
+                            $("#img_photo").removeClass("hide");
+                            $("#img_photo").attr("src","__ROOT__/Uploads/"+data.savepath+data.savename);
+                            $("#photo_hidden").val(data.savepath+data.savename);
+                        }
 
+                    },
+                    error: function (data, status, e)//服务器响应失败处理函数
+                    {
+                        alert(e);
+                    }
+                });
+            });
 
             $("#save").click(function(){
                 $("#remark").val($(".summernote").code());
@@ -169,6 +199,19 @@
                             <div class="col-sm-10">
                                 <input type="text" name="title" id="title" class="form-control" value="{$good['title']}">
                             </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">产品图片</label>
+
+                            <div class="col-sm-10">
+                                <input type="file"   id="photo" name="file_photo"   class="form-control file">
+                                <input type="hidden" name="photo" id="photo_hidden" value="{$good['photo']}" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+
+                            <img class="col-sm-2 pull-right <empty name="good.photo">hide</empty>"  id="img_photo" src="__ROOT__/Uploads/{$good['photo']}">
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
