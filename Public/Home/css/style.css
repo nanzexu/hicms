@@ -1,5 +1,6 @@
 body{
     background:url(bg.jpg);
+    /*background-color: #030303;*/
     background-position: center 0;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -63,6 +64,9 @@ body{
 }
 .pics{
     padding: 0px;
+}
+.price div{
+    color:#ffff00;
 }
 @media (max-width: 480px){
 

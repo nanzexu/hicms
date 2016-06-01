@@ -114,7 +114,7 @@
         </notempty>
 
 		<div class="row">
-		   <div class="col-sm-12 col-xs-12 " >
+		   <div class="col-sm-12 col-xs-12 price" >
 		       <div class="col-sm-3 col-xs-3 pull-left text-left" style="color:red;font-weight:900;font-size: 26px;"><h1 style="margin:10px;">￥{$good['price']}</h1></div>
 			   <div class="col-sm-9 col-xs-9 pull-left">
 			        <div class="col-sm-4 col-xs-4 pull-left text-right"><p>原价</p><p><del>￥{$good['original_price']}</del></p></div>
@@ -125,11 +125,9 @@
 		</div>
 		<hr/>
 		<div class="row">
-		   <div class="col-sm-12 col-xs-12 text-center pics" >
-		       <h3 style="margin:0px;color:red;font-weight:900;">{:rand(10000,20000);}人已购买</h3>
-		   </div>
+
             <div class="col-sm-12 col-xs-12 text-center pics time-item" >
-                <p><span class="time_text" >活动结束时间：</span></p>
+                <p><span class="time_text" >{:rand(10000,20000);}人已购买!活动结束时间：</span></p>
                 <span id="day_show" class="time_text" >0天</span>
                 <strong id="hour_show">0时</strong>
                 <strong id="minute_show">0分</strong>
